@@ -9,9 +9,11 @@
  *   │   └── ContentItemRow
  *   ├── ObservationPanel — open observations + add-observation form
  *   └── ContentModal     — full-screen overlay opened when an item is tapped
- *       ├── PageViewer       — rendered WP post HTML + acknowledgment bar
- *       ├── DocumentViewer   — PDF iframe or download link
- *       └── ProcessViewer    — diagram image + hotspot overlay + HotspotSheet
+ *       ├── ContentBreadcrumb  — building › area › item path (hamburger on mobile)
+ *       ├── MetadataHeader     — owner / valid-from / next-review / status chips
+ *       ├── PageViewer         — rendered WP post HTML + DocumentOutline + Backlinks + ack bar
+ *       ├── DocumentViewer     — PDF inline or download + Backlinks
+ *       └── ProcessViewer      — diagram image + hotspot overlay + HotspotSheet
  */
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -23,6 +25,7 @@ import {
 	getBuildingObservations,
 	postObservation,
 	getPageContent,
+	getItemBacklinks,
 } from '@shared/api';
 import { EXECUTION_OUTCOMES, CONTENT_TYPES, DISPLAY_MODES, HOTSPOT_KINDS } from '@shared/constants';
 import { createBuildingSearch } from '@shared/search';
@@ -36,6 +39,28 @@ export default function App( { config } ) {
 	const [ activeArea, setActiveArea ] = useState( null );
 	const [ activeItem,  setActiveItem  ] = useState( null );
 	const [ searchQuery, setSearchQuery ] = useState( '' );
+
+	// SiYuan-style backStack: each entry is { item, areaKey } so pressing back
+	// returns the user to the correct area after navigating via LINK hotspots.
+	const backStack = useRef( [] );
+
+	const openItem = useCallback( ( item, areaKey = null ) => {
+		if ( activeItem ) {
+			backStack.current.push( { item: activeItem, areaKey: activeArea } );
+		}
+		if ( areaKey ) setActiveArea( areaKey );
+		setActiveItem( item );
+	}, [ activeItem, activeArea ] );
+
+	const goBack = useCallback( () => {
+		const prev = backStack.current.pop();
+		if ( prev ) {
+			setActiveItem( prev.item );
+			if ( prev.areaKey ) setActiveArea( prev.areaKey );
+		} else {
+			setActiveItem( null );
+		}
+	}, [] );
 
 	useEffect( () => {
 		getBuildingBundle( config.buildingId )
@@ -96,12 +121,12 @@ export default function App( { config } ) {
 				<SearchResults
 					items={searchResults}
 					query={searchQuery}
-					onOpenItem={setActiveItem}
+					onOpenItem={openItem}
 				/>
 			) : currentArea ? (
 				<ContentList
 					area={currentArea}
-					onOpenItem={setActiveItem}
+					onOpenItem={openItem}
 				/>
 			) : null }
 			<ObservationPanel buildingId={config.buildingId} config={config} />
@@ -110,8 +135,15 @@ export default function App( { config } ) {
 					item={activeItem}
 					config={config}
 					allItems={allItems}
-					onOpenItem={setActiveItem}
-					onClose={ () => setActiveItem( null ) }
+					buildingTitle={building.title}
+					areaLabel={currentArea?.label ?? ''}
+					canGoBack={ backStack.current.length > 0 }
+					onOpenItem={openItem}
+					onBack={goBack}
+					onClose={ () => {
+						backStack.current = [];
+						setActiveItem( null );
+					} }
 				/>
 			) }
 		</div>
@@ -120,17 +152,47 @@ export default function App( { config } ) {
 
 // ── Building Header ───────────────────────────────────────────────────────────
 
+/**
+ * SiYuan-inspired building header with optional cover image, icon, title,
+ * and metadata chip row (code, address, active status).
+ */
 function BuildingHeader( { building } ) {
 	const { meta } = building;
 	return (
 		<header className="orgahb-hv-header">
-			<h1 className="orgahb-hv-title">{ building.title }</h1>
-			{ ( meta.code || meta.address ) && (
-				<p className="orgahb-hv-subtitle">
-					{ meta.code    && <span className="orgahb-hv-code">{ meta.code }</span> }
-					{ meta.address && <span className="orgahb-hv-address">{ meta.address }</span> }
-				</p>
+			{ meta.cover_url && (
+				<div
+					className="orgahb-hv-cover"
+					role="img"
+					aria-label={ `${ building.title } cover image` }
+					style={ { backgroundImage: `url(${ meta.cover_url })` } }
+				/>
 			) }
+			<div className="orgahb-hv-header-body">
+				<span className="orgahb-hv-header-icon" aria-hidden="true">🏢</span>
+				<div className="orgahb-hv-header-content">
+					<h1 className="orgahb-hv-title">{ building.title }</h1>
+					{ ( meta.code || meta.address || meta.active === false ) && (
+						<div className="orgahb-hv-header-chips">
+							{ meta.code && (
+								<span className="orgahb-hv-header-chip">
+									<span className="orgahb-hv-header-chip-label">Code</span>
+									{ meta.code }
+								</span>
+							) }
+							{ meta.address && (
+								<span className="orgahb-hv-header-chip">
+									<span className="orgahb-hv-header-chip-label">Address</span>
+									{ meta.address }
+								</span>
+							) }
+							{ meta.active === false && (
+								<span className="orgahb-hv-header-chip is-inactive">Inactive</span>
+							) }
+						</div>
+					) }
+				</div>
+			</div>
 			{ meta.emergency_notes && (
 				<div className="orgahb-hv-emergency" role="note">
 					<strong>Emergency:</strong> { meta.emergency_notes }
@@ -298,7 +360,7 @@ function ContentItemRow( { item, onOpen } ) {
 
 // ── Content Modal ─────────────────────────────────────────────────────────────
 
-function ContentModal( { item, config, allItems, onOpenItem, onClose } ) {
+function ContentModal( { item, config, allItems, buildingTitle, areaLabel, canGoBack, onOpenItem, onBack, onClose } ) {
 	// Close on backdrop click.
 	const handleBackdrop = useCallback( ( e ) => {
 		if ( e.target === e.currentTarget ) {
@@ -306,12 +368,27 @@ function ContentModal( { item, config, allItems, onOpenItem, onClose } ) {
 		}
 	}, [ onClose ] );
 
-	// Close on Escape.
+	// Close on Escape, go back on browser Back button via popstate.
 	useEffect( () => {
-		const handler = ( e ) => { if ( e.key === 'Escape' ) onClose(); };
-		document.addEventListener( 'keydown', handler );
-		return () => document.removeEventListener( 'keydown', handler );
-	}, [ onClose ] );
+		const onKey = ( e ) => { if ( e.key === 'Escape' ) onClose(); };
+		document.addEventListener( 'keydown', onKey );
+
+		// Push a history entry so the browser back button triggers onBack / onClose.
+		window.history.pushState( { orgahbModal: true }, '' );
+		const onPop = () => {
+			if ( canGoBack ) {
+				onBack();
+			} else {
+				onClose();
+			}
+		};
+		window.addEventListener( 'popstate', onPop );
+
+		return () => {
+			document.removeEventListener( 'keydown', onKey );
+			window.removeEventListener( 'popstate', onPop );
+		};
+	}, [ onClose, onBack, canGoBack ] );
 
 	return (
 		<div
@@ -323,7 +400,13 @@ function ContentModal( { item, config, allItems, onOpenItem, onClose } ) {
 		>
 			<div className="orgahb-hv-modal">
 				<div className="orgahb-hv-modal-header">
-					<h2>{ item.title }</h2>
+					<ContentBreadcrumb
+						buildingTitle={buildingTitle}
+						areaLabel={areaLabel}
+						itemTitle={item.title}
+						canGoBack={canGoBack}
+						onBack={onBack}
+					/>
 					<button
 						className="orgahb-hv-modal-close"
 						onClick={onClose}
@@ -332,6 +415,7 @@ function ContentModal( { item, config, allItems, onOpenItem, onClose } ) {
 						×
 					</button>
 				</div>
+				<MetadataHeader item={item} />
 				<div className="orgahb-hv-modal-body">
 					{ item.content_type === CONTENT_TYPES.PAGE && (
 						<PageViewer item={item} config={config} />
@@ -348,6 +432,134 @@ function ContentModal( { item, config, allItems, onOpenItem, onClose } ) {
 	);
 }
 
+// ── Content Breadcrumb ────────────────────────────────────────────────────────
+
+/**
+ * SiYuan-style breadcrumb: "Building › Area › Item"
+ *
+ * On small screens (≤480 px) collapses to a single back/hamburger button
+ * that reveals a fullscreen ancestor overlay, mimicking SiYuan mobile UX.
+ */
+function ContentBreadcrumb( { buildingTitle, areaLabel, itemTitle, canGoBack, onBack } ) {
+	const [ menuOpen, setMenuOpen ] = useState( false );
+
+	const crumbs = [
+		buildingTitle,
+		areaLabel,
+	].filter( Boolean );
+
+	return (
+		<>
+			{ /* Desktop inline breadcrumb */ }
+			<nav className="orgahb-hv-breadcrumb" aria-label="Content location">
+				{ canGoBack && (
+					<button className="orgahb-hv-breadcrumb-back" onClick={onBack} aria-label="Go back">
+						‹
+					</button>
+				) }
+				<button
+					className="orgahb-hv-breadcrumb-toggle"
+					onClick={ () => setMenuOpen( true ) }
+					aria-label="Show location"
+					aria-expanded={menuOpen}
+				>
+					{ crumbs.map( ( c, i ) => (
+						<span key={i} className="orgahb-hv-breadcrumb-crumb">
+							{ i > 0 && <span className="orgahb-hv-breadcrumb-sep" aria-hidden="true"> › </span> }
+							{ c }
+						</span>
+					) ) }
+				</button>
+				<h2 className="orgahb-hv-modal-title">{ itemTitle }</h2>
+			</nav>
+
+			{ /* Mobile fullscreen ancestor overlay */ }
+			{ menuOpen && (
+				<div
+					className="orgahb-hv-breadcrumb-overlay"
+					role="dialog"
+					aria-modal="true"
+					aria-label="Content location"
+				>
+					<button
+						className="orgahb-hv-breadcrumb-overlay-close"
+						onClick={ () => setMenuOpen( false ) }
+						aria-label="Close"
+					>
+						×
+					</button>
+					<ul className="orgahb-hv-breadcrumb-list">
+						{ crumbs.map( ( c, i ) => (
+							<li key={i} className="orgahb-hv-breadcrumb-list-item">{ c }</li>
+						) ) }
+						<li className="orgahb-hv-breadcrumb-list-item is-current">{ itemTitle }</li>
+					</ul>
+					{ canGoBack && (
+						<button
+							className="orgahb-hv-breadcrumb-overlay-back"
+							onClick={ () => { setMenuOpen( false ); onBack(); } }
+						>
+							‹ Go back
+						</button>
+					) }
+				</div>
+			) }
+		</>
+	);
+}
+
+// ── Metadata Header ───────────────────────────────────────────────────────────
+
+/**
+ * SiYuan-inspired metadata chips bar shown below the breadcrumb and above
+ * the main content body.  Displays: owner · valid-from · valid-until ·
+ * next-review · status badge · version · change-log summary.
+ */
+function MetadataHeader( { item } ) {
+	const { meta, status } = item;
+
+	const statusLabel = {
+		publish:          'Published',
+		pending:          'Pending review',
+		draft:            'Draft',
+		orgahb_archived:  'Archived',
+	}[ status ] ?? status;
+
+	const chips = [
+		meta.owner_name   && { key: 'owner',   label: 'Owner',        value: meta.owner_name },
+		meta.valid_from   && { key: 'from',     label: 'Valid from',   value: meta.valid_from },
+		meta.valid_until  && { key: 'until',    label: 'Valid until',  value: meta.valid_until },
+		meta.next_review  && { key: 'review',   label: 'Next review',  value: meta.next_review },
+		meta.version_label && { key: 'version', label: 'Version',      value: meta.version_label },
+	].filter( Boolean );
+
+	if ( ! chips.length && ! status ) {
+		return null;
+	}
+
+	return (
+		<div className="orgahb-hv-meta-header" aria-label="Document metadata">
+			{ status && (
+				<span className={ `orgahb-hv-meta-status orgahb-hv-meta-status--${ status.replace( '_', '-' ) }` }>
+					{ statusLabel }
+				</span>
+			) }
+			{ chips.map( ( chip ) => (
+				<span key={chip.key} className="orgahb-hv-meta-chip">
+					<span className="orgahb-hv-meta-chip-label">{ chip.label }</span>
+					<span className="orgahb-hv-meta-chip-value">{ chip.value }</span>
+				</span>
+			) ) }
+			{ meta.change_log && (
+				<details className="orgahb-hv-meta-changelog">
+					<summary>Change log</summary>
+					<p>{ meta.change_log }</p>
+				</details>
+			) }
+		</div>
+	);
+}
+
 // ── Page Viewer ───────────────────────────────────────────────────────────────
 
 function PageViewer( { item, config } ) {
@@ -356,6 +568,7 @@ function PageViewer( { item, config } ) {
 	const [ acked,    setAcked    ] = useState( !! item.meta.user_has_acked );
 	const [ ackBusy,  setAckBusy  ] = useState( false );
 	const [ ackError, setAckError ] = useState( null );
+	const contentRef = useRef( null );
 
 	useEffect( () => {
 		getPageContent( item.content_id )
@@ -388,8 +601,8 @@ function PageViewer( { item, config } ) {
 
 	return (
 		<div className="orgahb-hv-page-viewer">
-			{ item.meta.version_label && (
-				<p className="orgahb-hv-version">Version: { item.meta.version_label }</p>
+			{ ! loading && html && (
+				<DocumentOutline contentRef={contentRef} />
 			) }
 			{ loading ? (
 				<p>Loading…</p>
@@ -397,6 +610,7 @@ function PageViewer( { item, config } ) {
 				/* WordPress sanitises page content server-side before storage. */
 				/* eslint-disable-next-line react/no-danger */
 				<div
+					ref={contentRef}
 					className="orgahb-hv-page-content"
 					dangerouslySetInnerHTML={ { __html: html } }
 				/>
@@ -414,7 +628,199 @@ function PageViewer( { item, config } ) {
 				</div>
 			) }
 			{ acked && <p className="orgahb-hv-acked" aria-live="polite">✓ Acknowledged</p> }
+			<Backlinks itemId={item.content_id} />
 		</div>
+	);
+}
+
+// ── Document Outline ──────────────────────────────────────────────────────────
+
+/**
+ * SiYuan-inspired floating heading outline for orgahb_page content.
+ *
+ * Scans the rendered HTML for h2/h3 headings, renders a collapsible ToC,
+ * and uses IntersectionObserver to highlight the currently-visible section.
+ * Expand-to-level controls let users filter to H2-only or H2+H3.
+ *
+ * @param {{ contentRef: React.RefObject }} props
+ */
+function DocumentOutline( { contentRef } ) {
+	const [ headings,     setHeadings     ] = useState( [] );
+	const [ activeId,     setActiveId     ] = useState( null );
+	const [ maxLevel,     setMaxLevel     ] = useState( 3 ); // 2 = H2 only, 3 = H2+H3
+	const [ open,         setOpen         ] = useState( true );
+
+	// Build heading list from rendered DOM after content mounts.
+	useEffect( () => {
+		const el = contentRef.current;
+		if ( ! el ) return;
+
+		// Wait one tick for dangerouslySetInnerHTML to paint.
+		const raf = requestAnimationFrame( () => {
+			const nodes = Array.from( el.querySelectorAll( 'h2, h3' ) );
+			const items = nodes.map( ( node, i ) => {
+				if ( ! node.id ) {
+					node.id = `orgahb-outline-${ i }`;
+				}
+				return {
+					id:    node.id,
+					text:  node.textContent.trim(),
+					level: parseInt( node.tagName[ 1 ], 10 ),
+				};
+			} );
+			setHeadings( items );
+		} );
+
+		return () => cancelAnimationFrame( raf );
+	}, [ contentRef ] );
+
+	// IntersectionObserver scroll-spy — highlight the topmost visible heading.
+	useEffect( () => {
+		if ( ! headings.length ) return;
+		const el = contentRef.current;
+		if ( ! el ) return;
+
+		const ids    = headings.map( ( h ) => h.id );
+		const nodes  = ids.map( ( id ) => el.querySelector( `#${ id }` ) ).filter( Boolean );
+		const visible = new Set();
+
+		const observer = new IntersectionObserver(
+			( entries ) => {
+				entries.forEach( ( entry ) => {
+					if ( entry.isIntersecting ) {
+						visible.add( entry.target.id );
+					} else {
+						visible.delete( entry.target.id );
+					}
+				} );
+				// Highlight the first visible heading in document order.
+				const first = ids.find( ( id ) => visible.has( id ) );
+				if ( first ) setActiveId( first );
+			},
+			{ rootMargin: '0px 0px -60% 0px', threshold: 0 }
+		);
+
+		nodes.forEach( ( n ) => observer.observe( n ) );
+		return () => observer.disconnect();
+	}, [ headings, contentRef ] );
+
+	const visible = headings.filter( ( h ) => h.level <= maxLevel );
+
+	if ( visible.length < 2 ) {
+		return null; // not enough headings to warrant a ToC
+	}
+
+	return (
+		<nav className={ `orgahb-hv-outline${ open ? ' is-open' : '' }` } aria-label="Page outline">
+			<div className="orgahb-hv-outline-toolbar">
+				<button
+					className="orgahb-hv-outline-toggle"
+					onClick={ () => setOpen( ( v ) => ! v ) }
+					aria-expanded={open}
+					aria-label={ open ? 'Collapse outline' : 'Expand outline' }
+				>
+					{ open ? '▾ Outline' : '▸ Outline' }
+				</button>
+				{ open && (
+					<span className="orgahb-hv-outline-levels">
+						<button
+							className={ `orgahb-hv-outline-level-btn${ maxLevel === 2 ? ' is-active' : '' }` }
+							onClick={ () => setMaxLevel( 2 ) }
+							aria-pressed={ maxLevel === 2 }
+						>H2</button>
+						<button
+							className={ `orgahb-hv-outline-level-btn${ maxLevel === 3 ? ' is-active' : '' }` }
+							onClick={ () => setMaxLevel( 3 ) }
+							aria-pressed={ maxLevel === 3 }
+						>H2+H3</button>
+					</span>
+				) }
+			</div>
+			{ open && (
+				<ul className="orgahb-hv-outline-list">
+					{ visible.map( ( h ) => (
+						<li
+							key={h.id}
+							className={ `orgahb-hv-outline-item is-h${ h.level }${ h.id === activeId ? ' is-active' : '' }` }
+						>
+							<a
+								href={ `#${ h.id }` }
+								className="orgahb-hv-outline-link"
+								aria-current={ h.id === activeId ? 'location' : undefined }
+								onClick={ ( e ) => {
+									e.preventDefault();
+									document.getElementById( h.id )?.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+								} }
+							>
+								{ h.text }
+							</a>
+						</li>
+					) ) }
+				</ul>
+			) }
+		</nav>
+	);
+}
+
+// ── Backlinks ─────────────────────────────────────────────────────────────────
+
+/**
+ * SiYuan-inspired "What links here?" panel.
+ *
+ * Loads processes that contain a LINK hotspot targeting this item, shown
+ * as a collapsible list at the bottom of PageViewer and DocumentViewer.
+ *
+ * @param {{ itemId: number }} props
+ */
+function Backlinks( { itemId } ) {
+	const [ links,   setLinks   ] = useState( null ); // null = not yet loaded
+	const [ loading, setLoading ] = useState( false );
+	const [ open,    setOpen    ] = useState( false );
+
+	// Load lazily — only when the user expands the panel.
+	const handleToggle = useCallback( () => {
+		setOpen( ( v ) => {
+			if ( ! v && links === null ) {
+				setLoading( true );
+				getItemBacklinks( itemId )
+					.then( ( data ) => { setLinks( data ); setLoading( false ); } )
+					.catch( () => { setLinks( [] ); setLoading( false ); } );
+			}
+			return ! v;
+		} );
+	}, [ itemId, links ] );
+
+	return (
+		<section className="orgahb-hv-backlinks">
+			<button
+				className="orgahb-hv-backlinks-toggle"
+				onClick={handleToggle}
+				aria-expanded={open}
+			>
+				{ open ? '▾' : '▸' } What links here?
+				{ links !== null && links.length > 0 && (
+					<span className="orgahb-hv-backlinks-count">{ links.length }</span>
+				) }
+			</button>
+			{ open && (
+				<div className="orgahb-hv-backlinks-body">
+					{ loading && <p>Loading…</p> }
+					{ ! loading && links !== null && links.length === 0 && (
+						<p className="orgahb-hv-backlinks-empty">No processes link to this item.</p>
+					) }
+					{ ! loading && links && links.length > 0 && (
+						<ul className="orgahb-hv-backlinks-list">
+							{ links.map( ( bl ) => (
+								<li key={bl.content_id} className="orgahb-hv-backlinks-item">
+									<span className="orgahb-hv-item-icon" aria-hidden="true">🔧</span>
+									{ bl.title }
+								</li>
+							) ) }
+						</ul>
+					) }
+				</div>
+			) }
+		</section>
 	);
 }
 
@@ -449,9 +855,6 @@ function DocumentViewer( { item } ) {
 
 	return (
 		<div className="orgahb-hv-doc-viewer">
-			{ meta.version_label && (
-				<p className="orgahb-hv-version">Version: { meta.version_label }</p>
-			) }
 			{ isPdf && isInline ? (
 				<>
 					{ pdfLoading && <p className="orgahb-hv-pdf-loading" aria-live="polite">Loading…</p> }
@@ -475,6 +878,7 @@ function DocumentViewer( { item } ) {
 					</a>
 				</p>
 			) }
+			<Backlinks itemId={item.content_id} />
 		</div>
 	);
 }

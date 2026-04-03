@@ -188,6 +188,19 @@ export function resolveObservation( obsId, data = {} ) {
 	return apiFetch( { path: `orgahb/v1/observations/${obsId}/resolve`, method: 'POST', data } );
 }
 
+// ── Backlinks ─────────────────────────────────────────────────────────────────
+
+/**
+ * Returns all published processes that link to a given content item via a LINK
+ * hotspot — the "What links here?" backlinks list (SiYuan-inspired).
+ *
+ * @param {number} itemId  content post ID.
+ * @returns {Array<{ content_id: number, title: string, content_type: string }>}
+ */
+export function getItemBacklinks( itemId ) {
+	return apiFetch( { path: `orgahb/v1/items/${itemId}/backlinks` } );
+}
+
 // ── Page content ──────────────────────────────────────────────────────────────
 
 /**

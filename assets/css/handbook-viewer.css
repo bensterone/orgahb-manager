@@ -820,3 +820,411 @@
 	border-radius: 4px;
 	text-align: center;
 }
+
+/* ── Content Breadcrumb (SiYuan-style) ───────────────────────────────────── */
+
+.orgahb-hv-breadcrumb {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex: 1;
+	min-width: 0;
+	font-size: 13px;
+	color: #646970;
+}
+
+.orgahb-hv-breadcrumb-back {
+	flex-shrink: 0;
+	width: 32px;
+	height: 32px;
+	background: none;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	font-size: 18px;
+	line-height: 1;
+	cursor: pointer;
+	color: #3c434a;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.orgahb-hv-breadcrumb-toggle {
+	background: none;
+	border: none;
+	padding: 0;
+	cursor: pointer;
+	color: #646970;
+	font-size: 13px;
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.orgahb-hv-breadcrumb-sep {
+	color: #c3c4c7;
+}
+
+.orgahb-hv-modal-title {
+	font-size: 16px;
+	font-weight: 600;
+	margin: 0;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* Mobile: hide inline breadcrumb crumbs, show only the toggle */
+@media (max-width: 480px) {
+	.orgahb-hv-breadcrumb-crumb {
+		display: none;
+	}
+	.orgahb-hv-breadcrumb-toggle::before {
+		content: '☰';
+		font-size: 16px;
+	}
+}
+
+/* Fullscreen breadcrumb overlay (mobile) */
+.orgahb-hv-breadcrumb-overlay {
+	position: fixed;
+	inset: 0;
+	background: #fff;
+	z-index: 10000;
+	display: flex;
+	flex-direction: column;
+	padding: 20px;
+	gap: 12px;
+}
+
+.orgahb-hv-breadcrumb-overlay-close {
+	align-self: flex-end;
+	width: 44px;
+	height: 44px;
+	background: none;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	font-size: 20px;
+	cursor: pointer;
+}
+
+.orgahb-hv-breadcrumb-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	flex: 1;
+}
+
+.orgahb-hv-breadcrumb-list-item {
+	padding: 14px 0;
+	border-bottom: 1px solid #f0f0f1;
+	font-size: 15px;
+	color: #646970;
+}
+
+.orgahb-hv-breadcrumb-list-item.is-current {
+	color: #1d2327;
+	font-weight: 600;
+}
+
+.orgahb-hv-breadcrumb-overlay-back {
+	width: 100%;
+	padding: 14px;
+	background: #f6f7f7;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	font-size: 15px;
+	cursor: pointer;
+	text-align: left;
+}
+
+/* ── Metadata Header ─────────────────────────────────────────────────────── */
+
+.orgahb-hv-meta-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 20px;
+	background: #f6f7f7;
+	border-bottom: 1px solid #dcdcde;
+	font-size: 12px;
+}
+
+.orgahb-hv-meta-status {
+	display: inline-flex;
+	align-items: center;
+	padding: 2px 8px;
+	border-radius: 10px;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+}
+
+.orgahb-hv-meta-status--publish         { background: #d7f0dd; color: #1a6830; }
+.orgahb-hv-meta-status--pending         { background: #fef3cd; color: #7a5800; }
+.orgahb-hv-meta-status--draft           { background: #e5e5e5; color: #3c434a; }
+.orgahb-hv-meta-status--orgahb-archived { background: #f0f0f1; color: #646970; }
+
+.orgahb-hv-meta-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	padding: 2px 8px;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 10px;
+	color: #3c434a;
+}
+
+.orgahb-hv-meta-chip-label {
+	color: #646970;
+}
+
+.orgahb-hv-meta-chip-label::after {
+	content: ':';
+}
+
+.orgahb-hv-meta-changelog {
+	width: 100%;
+	font-size: 12px;
+	color: #3c434a;
+}
+
+.orgahb-hv-meta-changelog summary {
+	cursor: pointer;
+	color: #646970;
+}
+
+.orgahb-hv-meta-changelog p {
+	margin: 4px 0 0;
+	padding: 8px;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+}
+
+/* ── Document Outline (SiYuan-style) ─────────────────────────────────────── */
+
+.orgahb-hv-outline {
+	position: sticky;
+	top: 0;
+	z-index: 10;
+	background: #fff;
+	border-bottom: 1px solid #dcdcde;
+	margin-bottom: 16px;
+}
+
+.orgahb-hv-outline-toolbar {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 12px;
+}
+
+.orgahb-hv-outline-toggle {
+	background: none;
+	border: none;
+	padding: 0;
+	font-size: 13px;
+	font-weight: 600;
+	color: #3c434a;
+	cursor: pointer;
+}
+
+.orgahb-hv-outline-levels {
+	display: flex;
+	gap: 4px;
+	margin-left: auto;
+}
+
+.orgahb-hv-outline-level-btn {
+	padding: 2px 8px;
+	font-size: 11px;
+	background: none;
+	border: 1px solid #c3c4c7;
+	border-radius: 3px;
+	cursor: pointer;
+	color: #3c434a;
+}
+
+.orgahb-hv-outline-level-btn.is-active {
+	background: #2271b1;
+	border-color: #2271b1;
+	color: #fff;
+}
+
+.orgahb-hv-outline-list {
+	list-style: none;
+	margin: 0;
+	padding: 4px 12px 8px;
+	max-height: 200px;
+	overflow-y: auto;
+}
+
+.orgahb-hv-outline-item {
+	line-height: 1.4;
+}
+
+.orgahb-hv-outline-item.is-h3 {
+	padding-left: 14px;
+}
+
+.orgahb-hv-outline-link {
+	font-size: 13px;
+	color: #646970;
+	text-decoration: none;
+	display: block;
+	padding: 2px 0;
+	border-left: 2px solid transparent;
+	padding-left: 6px;
+	transition: color 0.15s, border-color 0.15s;
+}
+
+.orgahb-hv-outline-link:hover {
+	color: #2271b1;
+}
+
+.orgahb-hv-outline-item.is-active .orgahb-hv-outline-link {
+	color: #2271b1;
+	border-left-color: #2271b1;
+	font-weight: 600;
+}
+
+/* ── Backlinks (SiYuan-style "What links here?") ─────────────────────────── */
+
+.orgahb-hv-backlinks {
+	margin-top: 32px;
+	border-top: 1px solid #dcdcde;
+	padding-top: 12px;
+}
+
+.orgahb-hv-backlinks-toggle {
+	background: none;
+	border: none;
+	padding: 0;
+	font-size: 13px;
+	font-weight: 600;
+	color: #646970;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.orgahb-hv-backlinks-count {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 18px;
+	height: 18px;
+	padding: 0 4px;
+	background: #2271b1;
+	color: #fff;
+	border-radius: 9px;
+	font-size: 11px;
+	font-weight: 700;
+}
+
+.orgahb-hv-backlinks-body {
+	margin-top: 8px;
+}
+
+.orgahb-hv-backlinks-empty {
+	font-size: 13px;
+	color: #646970;
+}
+
+.orgahb-hv-backlinks-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.orgahb-hv-backlinks-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 13px;
+	color: #3c434a;
+	padding: 6px 8px;
+	background: #f6f7f7;
+	border-radius: 4px;
+}
+
+/* ── Building Cover Image + Header Chips (SiYuan-style) ──────────────────── */
+
+.orgahb-hv-cover {
+	width: 100%;
+	height: 160px;
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	border-bottom: 1px solid #dcdcde;
+}
+
+@media (min-width: 640px) {
+	.orgahb-hv-cover {
+		height: 220px;
+	}
+}
+
+.orgahb-hv-header-body {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 16px 20px 0;
+}
+
+.orgahb-hv-header-icon {
+	font-size: 32px;
+	line-height: 1;
+	flex-shrink: 0;
+	margin-top: 2px;
+}
+
+.orgahb-hv-header-content {
+	flex: 1;
+	min-width: 0;
+}
+
+.orgahb-hv-header-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-top: 6px;
+}
+
+.orgahb-hv-header-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 2px 8px;
+	background: #f6f7f7;
+	border: 1px solid #dcdcde;
+	border-radius: 10px;
+	font-size: 12px;
+	color: #3c434a;
+}
+
+.orgahb-hv-header-chip.is-inactive {
+	background: #fcf0f1;
+	border-color: #f0a1a8;
+	color: #c02b2b;
+}
+
+.orgahb-hv-header-chip-label {
+	color: #646970;
+	font-size: 11px;
+}
+
+.orgahb-hv-header-chip-label::after {
+	content: ':';
+}

@@ -231,6 +231,16 @@ final class ORGAHB_REST_API {
 				'areas' => array( 'required' => true ),
 			),
 		) );
+
+		// GET /items/{id}/backlinks — processes whose hotspots link to this item.
+		register_rest_route( $ns, '/items/(?P<id>\d+)/backlinks', array(
+			'methods'             => 'GET',
+			'callback'            => array( self::class, 'get_item_backlinks' ),
+			'permission_callback' => array( self::class, 'can_read_content' ),
+			'args'                => array(
+				'id' => array( 'required' => true, 'sanitize_callback' => 'absint' ),
+			),
+		) );
 	}
 
 	// ────────────────────────────────────────────────────────────────────────────
@@ -830,6 +840,13 @@ final class ORGAHB_REST_API {
 	 */
 	private static function format_building( WP_Post $post ): array {
 		$id = $post->ID;
+
+		// Cover image: use WordPress featured image (post thumbnail).
+		$thumb_id  = (int) get_post_thumbnail_id( $id );
+		$cover_url = $thumb_id
+			? (string) wp_get_attachment_image_url( $thumb_id, 'large' )
+			: '';
+
 		return array(
 			'id'     => $id,
 			'title'  => $post->post_title,
@@ -843,6 +860,7 @@ final class ORGAHB_REST_API {
 				'active'          => ORGAHB_Buildings::is_active( $id ),
 				'qr_token'        => ORGAHB_QR::get_token( $id ),
 				'next_review'     => ORGAHB_Buildings::get_next_review( $id ),
+				'cover_url'       => $cover_url,
 			),
 			'areas'  => ORGAHB_Buildings::get_areas( $id ),
 		);
@@ -866,8 +884,12 @@ final class ORGAHB_REST_API {
 		$revision_id     = ! empty( $revisions ) ? (int) reset( $revisions ) : $id;
 
 		$meta = array(
-			'version_label'      => (string) get_post_meta( $id, ORGAHB_Metaboxes::META_VERSION_LABEL, true ),
-			'next_review'        => (string) get_post_meta( $id, ORGAHB_Buildings::META_NEXT_REVIEW, true ),
+			'version_label'       => (string) get_post_meta( $id, ORGAHB_Metaboxes::META_VERSION_LABEL, true ),
+			'change_log'          => (string) get_post_meta( $id, ORGAHB_Metaboxes::META_CHANGE_LOG, true ),
+			'valid_from'          => (string) get_post_meta( $id, ORGAHB_Metaboxes::META_VALID_FROM, true ),
+			'valid_until'         => (string) get_post_meta( $id, ORGAHB_Metaboxes::META_VALID_UNTIL, true ),
+			'next_review'         => (string) get_post_meta( $id, ORGAHB_Buildings::META_NEXT_REVIEW, true ),
+			'owner_name'          => (string) get_the_author_meta( 'display_name', $post->post_author ),
 			'current_revision_id' => $revision_id,
 		);
 
@@ -999,6 +1021,64 @@ final class ORGAHB_REST_API {
 	 */
 	public static function invalidate_bundle_cache( int $building_id ): void {
 		delete_transient( self::BUNDLE_TRANSIENT_PREFIX . $building_id );
+	}
+
+	// ────────────────────────────────────────────────────────────────────────────
+	// Handler: backlinks
+	// ────────────────────────────────────────────────────────────────────────────
+
+	/**
+	 * GET /items/{id}/backlinks
+	 *
+	 * Returns all published processes whose hotspot JSON contains a LINK hotspot
+	 * targeting this item (by content_id).  Supports the "What links here?"
+	 * SiYuan-style backlinks panel in the handbook viewer.
+	 *
+	 * @param WP_REST_Request $request
+	 * @return WP_REST_Response
+	 */
+	public static function get_item_backlinks( WP_REST_Request $request ): WP_REST_Response {
+		$target_id = (int) $request->get_param( 'id' );
+
+		// Query all published processes that have hotspot JSON meta set.
+		$processes = get_posts( array(
+			'post_type'      => 'orgahb_process',
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'fields'         => 'ids',
+			'meta_query'     => array(
+				array(
+					'key'     => ORGAHB_Metaboxes::META_HOTSPOTS_JSON,
+					'value'   => '"target_id":' . $target_id,
+					'compare' => 'LIKE',
+				),
+			),
+		) );
+
+		$backlinks = array();
+		foreach ( $processes as $pid ) {
+			$json = (string) get_post_meta( $pid, ORGAHB_Metaboxes::META_HOTSPOTS_JSON, true );
+			$hotspots = json_decode( $json, true );
+			if ( ! is_array( $hotspots ) ) {
+				continue;
+			}
+			// Confirm at least one LINK hotspot actually targets this item.
+			foreach ( $hotspots as $hs ) {
+				if ( isset( $hs['target_id'] ) && (int) $hs['target_id'] === $target_id ) {
+					$post = get_post( $pid );
+					if ( $post ) {
+						$backlinks[] = array(
+							'content_id'   => $pid,
+							'title'        => $post->post_title,
+							'content_type' => 'process',
+						);
+					}
+					break; // one match per process is enough
+				}
+			}
+		}
+
+		return new WP_REST_Response( $backlinks, 200 );
 	}
 
 	// ────────────────────────────────────────────────────────────────────────────
