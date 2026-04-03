@@ -80,7 +80,8 @@ final class ORGAHB_Capabilities {
 				'edit_published_orgahb_contents'     => true,
 				'edit_private_orgahb_contents'       => true,
 				'upload_files'                       => true,
-				// Building management (editors can draft building records).
+				// Building management (editors can manage bundles and draft buildings).
+				'manage_orgahb_buildings'            => true,
 				'edit_orgahb_buildings'              => true,
 				'edit_orgahb_building'               => true,
 				'create_orgahb_buildings'            => true,
