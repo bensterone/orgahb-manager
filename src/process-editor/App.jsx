@@ -99,11 +99,12 @@ export default function App( { config } ) {
 		};
 	}, [] );
 
-	const handleMouseDown = useCallback( ( e ) => {
-		// Only start draw on the image itself or the stage, not on existing hotspots.
+	const handlePointerDown = useCallback( ( e ) => {
+		// Only draw on the image or the empty wrapper — not on existing hotspots.
 		if ( e.target !== imgRef.current && ! e.target.classList.contains( 'orgahb-pe-image-wrap' ) ) return;
 		if ( ! imgSize ) return;
 		e.preventDefault();
+		e.currentTarget.setPointerCapture( e.pointerId );
 
 		const pos = getPctPos( e );
 		if ( ! pos ) return;
@@ -114,7 +115,7 @@ export default function App( { config } ) {
 		setSelected( null );
 	}, [ imgSize, getPctPos ] );
 
-	const handleMouseMove = useCallback( ( e ) => {
+	const handlePointerMove = useCallback( ( e ) => {
 		if ( ! isMouseDownRef.current || ! drawStartRef.current ) return;
 		const pos = getPctPos( e );
 		if ( ! pos ) return;
@@ -128,7 +129,7 @@ export default function App( { config } ) {
 		} );
 	}, [ getPctPos ] );
 
-	const handleMouseUp = useCallback( ( e ) => {
+	const handlePointerUp = useCallback( ( e ) => {
 		if ( ! isMouseDownRef.current ) return;
 		isMouseDownRef.current = false;
 
@@ -243,10 +244,10 @@ export default function App( { config } ) {
 				{/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
 				<div
 					className={ `orgahb-pe-image-wrap${ imgSize ? ' is-ready' : '' }` }
-					onMouseDown={handleMouseDown}
-					onMouseMove={handleMouseMove}
-					onMouseUp={handleMouseUp}
-					onMouseLeave={handleMouseUp}
+					onPointerDown={handlePointerDown}
+					onPointerMove={handlePointerMove}
+					onPointerUp={handlePointerUp}
+					onPointerCancel={handlePointerUp}
 					role="presentation"
 				>
 					<img
@@ -256,6 +257,7 @@ export default function App( { config } ) {
 						className="orgahb-pe-image"
 						onLoad={onImageLoad}
 						draggable="false"
+						onDragStart={ ( e ) => e.preventDefault() }
 					/>
 
 					{ imgSize && hotspots.map( ( hs ) => (
@@ -335,7 +337,7 @@ function HotspotOverlay( { hotspot, isSelected, onSelect, setupInteract } ) {
 				width:  `${ hotspot.w_pct }%`,
 				height: `${ hotspot.h_pct }%`,
 			} }
-			onMouseDown={ ( e ) => e.stopPropagation() }
+			onPointerDown={ ( e ) => e.stopPropagation() }
 			onClick={ ( e ) => { e.stopPropagation(); onSelect(); } }
 			title={ hotspot.label }
 			aria-label={ hotspot.label }

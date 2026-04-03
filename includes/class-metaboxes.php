@@ -829,7 +829,7 @@ final class ORGAHB_Metaboxes {
 		) ) {
 			return;
 		}
-		if ( ! current_user_can( 'edit_orgahb_building', $post_id ) ) {
+		if ( ! current_user_can( 'edit_orgahb_buildings' ) ) {
 			return;
 		}
 
@@ -881,7 +881,7 @@ final class ORGAHB_Metaboxes {
 		) ) {
 			return;
 		}
-		if ( ! current_user_can( 'edit_orgahb_content', $post_id ) ) {
+		if ( ! current_user_can( 'edit_orgahb_contents' ) ) {
 			return;
 		}
 
@@ -924,7 +924,7 @@ final class ORGAHB_Metaboxes {
 		) ) {
 			return;
 		}
-		if ( ! current_user_can( 'edit_orgahb_content', $post_id ) ) {
+		if ( ! current_user_can( 'edit_orgahb_contents' ) ) {
 			return;
 		}
 
@@ -962,7 +962,7 @@ final class ORGAHB_Metaboxes {
 		) ) {
 			return;
 		}
-		if ( ! current_user_can( 'edit_orgahb_content', $post_id ) ) {
+		if ( ! current_user_can( 'edit_orgahb_contents' ) ) {
 			return;
 		}
 
