@@ -188,6 +188,18 @@ export function resolveObservation( obsId, data = {} ) {
 	return apiFetch( { path: `orgahb/v1/observations/${obsId}/resolve`, method: 'POST', data } );
 }
 
+// ── Sections tree ─────────────────────────────────────────────────────────────
+
+/**
+ * Returns the full orgahb_section hierarchy with all published content items.
+ * Powers the desktop handbook tree viewer.
+ *
+ * @returns {{ org_name: string, sections: Array }}
+ */
+export function getSectionsTree() {
+	return apiFetch( { path: 'orgahb/v1/sections/tree' } );
+}
+
 // ── Backlinks ─────────────────────────────────────────────────────────────────
 
 /**

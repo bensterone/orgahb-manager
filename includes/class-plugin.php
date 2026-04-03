@@ -128,6 +128,9 @@ final class ORGAHB_Plugin {
 
 		// SVG upload sanitization — no internal dependencies.
 		require_once $dir . 'includes/class-svg.php';
+
+		// Desktop handbook tree viewer ([orgahb_handbook] shortcode).
+		require_once $dir . 'includes/class-handbook-tree.php';
 	}
 
 	/**
@@ -170,5 +173,6 @@ final class ORGAHB_Plugin {
 		ORGAHB_Feedback::init();
 		ORGAHB_Import::init();
 		ORGAHB_SVG::init();
+		ORGAHB_Handbook_Tree::init();
 	}
 }

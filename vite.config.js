@@ -14,6 +14,7 @@ export default defineConfig( {
 				'admin-qr':        resolve( __dirname, 'src/admin-qr/main.js' ),
 				'process-editor':  resolve( __dirname, 'src/process-editor/main.jsx' ),
 				'handbook-viewer': resolve( __dirname, 'src/handbook-viewer/main.jsx' ),
+				'handbook-tree':   resolve( __dirname, 'src/handbook-tree/main.jsx' ),
 			},
 			// WordPress externals — provided by WP core at runtime, never bundled.
 			external: [

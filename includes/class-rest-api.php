@@ -53,6 +53,13 @@ final class ORGAHB_REST_API {
 		// admin-side changes bust the cache before the next field request.
 		add_action( 'save_post',                     array( self::class, 'on_post_change' ), 20, 1 );
 		add_action( 'orgahb_building_links_changed', array( self::class, 'invalidate_bundle_cache' ), 10, 1 );
+
+		// Sections tree cache: bust on any content save or taxonomy term change.
+		add_action( 'save_post',              array( self::class, 'invalidate_sections_tree_cache' ), 20 );
+		add_action( 'edited_orgahb_section',  array( self::class, 'invalidate_sections_tree_cache' ) );
+		add_action( 'created_orgahb_section', array( self::class, 'invalidate_sections_tree_cache' ) );
+		add_action( 'deleted_orgahb_section', array( self::class, 'invalidate_sections_tree_cache' ) );
+		add_action( 'set_object_terms',       array( self::class, 'invalidate_sections_tree_cache' ) );
 	}
 
 	// ── Route registration ────────────────────────────────────────────────────
@@ -230,6 +237,13 @@ final class ORGAHB_REST_API {
 				'id'    => array( 'required' => true, 'sanitize_callback' => 'absint' ),
 				'areas' => array( 'required' => true ),
 			),
+		) );
+
+		// GET /sections/tree — full orgahb_section hierarchy with content items.
+		register_rest_route( $ns, '/sections/tree', array(
+			'methods'             => 'GET',
+			'callback'            => array( self::class, 'get_sections_tree' ),
+			'permission_callback' => array( self::class, 'can_read_content' ),
 		) );
 
 		// GET /items/{id}/backlinks — processes whose hotspots link to this item.
@@ -1019,8 +1033,204 @@ final class ORGAHB_REST_API {
 	 * @param int $building_id
 	 * @return void
 	 */
+	/** @return void */
+	public static function invalidate_sections_tree_cache(): void {
+		delete_transient( 'orgahb_sections_tree_structure' );
+	}
+
 	public static function invalidate_bundle_cache( int $building_id ): void {
 		delete_transient( self::BUNDLE_TRANSIENT_PREFIX . $building_id );
+	}
+
+	// ────────────────────────────────────────────────────────────────────────────
+	// Handler: sections tree
+	// ────────────────────────────────────────────────────────────────────────────
+
+	/**
+	 * GET /sections/tree
+	 *
+	 * Returns the full orgahb_section taxonomy tree with all published content
+	 * items (pages, processes, documents) nested under their respective sections.
+	 * This powers the desktop "full handbook" tree navigation view.
+	 *
+	 * Cached as a transient; invalidated on save_post and term changes.
+	 *
+	 * @param WP_REST_Request $request
+	 * @return WP_REST_Response
+	 */
+	public static function get_sections_tree( WP_REST_Request $request ): WP_REST_Response {
+		$transient_key  = 'orgahb_sections_tree_' . get_current_user_id();
+		$structural_key = 'orgahb_sections_tree_structure';
+
+		// Per-user overlay: user_has_acked is injected after the structural cache.
+		$structure = get_transient( $structural_key );
+
+		if ( false === $structure ) {
+			$structure = self::build_sections_tree();
+			set_transient( $structural_key, $structure, self::BUNDLE_CACHE_TTL );
+		}
+
+		// Overlay per-user acknowledgment status on page and document items.
+		$user_id = get_current_user_id();
+		if ( $user_id ) {
+			$structure['sections'] = self::overlay_tree_acks( $structure['sections'], $user_id );
+		}
+
+		return new WP_REST_Response( $structure, 200 );
+	}
+
+	/**
+	 * Builds the raw section tree structure (no per-user data).
+	 *
+	 * @return array<string, mixed>
+	 */
+	private static function build_sections_tree(): array {
+		$terms = get_terms( array(
+			'taxonomy'   => 'orgahb_section',
+			'hide_empty' => false,
+			'orderby'    => 'name',
+			'order'      => 'ASC',
+		) );
+
+		if ( is_wp_error( $terms ) || empty( $terms ) ) {
+			return array( 'org_name' => get_bloginfo( 'name' ), 'sections' => array() );
+		}
+
+		// Index terms by ID for O(1) child lookup.
+		$by_id = array();
+		foreach ( $terms as $term ) {
+			$by_id[ $term->term_id ] = array(
+				'id'       => $term->term_id,
+				'name'     => $term->name,
+				'slug'     => $term->slug,
+				'parent_id'=> $term->parent,
+				'children' => array(),
+				'items'    => array(),
+			);
+		}
+
+		// Fetch all published content in one query per CPT type.
+		$all_posts = get_posts( array(
+			'post_type'      => array( 'orgahb_page', 'orgahb_process', 'orgahb_document' ),
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'orderby'        => 'title',
+			'order'          => 'ASC',
+		) );
+
+		// Map CPT name → content_type slug.
+		$type_map = array(
+			'orgahb_page'     => 'page',
+			'orgahb_process'  => 'process',
+			'orgahb_document' => 'document',
+		);
+
+		// Assign each post to every section it belongs to.
+		foreach ( $all_posts as $post ) {
+			$post_terms = wp_get_object_terms( $post->ID, 'orgahb_section', array( 'fields' => 'ids' ) );
+			if ( is_wp_error( $post_terms ) || empty( $post_terms ) ) {
+				continue;
+			}
+
+			$content_type = $type_map[ $post->post_type ] ?? $post->post_type;
+			$item         = self::format_tree_item( $post, $content_type );
+
+			foreach ( $post_terms as $tid ) {
+				if ( isset( $by_id[ $tid ] ) ) {
+					$by_id[ $tid ]['items'][] = $item;
+				}
+			}
+		}
+
+		// Build nested tree from flat list.
+		$roots = array();
+		foreach ( $by_id as $tid => &$node ) {
+			if ( 0 === (int) $node['parent_id'] || ! isset( $by_id[ $node['parent_id'] ] ) ) {
+				$roots[] = &$node;
+			} else {
+				$by_id[ $node['parent_id'] ]['children'][] = &$node;
+			}
+		}
+		unset( $node );
+
+		return array(
+			'org_name' => get_bloginfo( 'name' ),
+			'sections' => array_values( $roots ),
+		);
+	}
+
+	/**
+	 * Formats a single content post as a tree item (no per-user data).
+	 *
+	 * @param WP_Post $post
+	 * @param string  $content_type  'page' | 'process' | 'document'
+	 * @return array<string, mixed>
+	 */
+	private static function format_tree_item( WP_Post $post, string $content_type ): array {
+		$id   = $post->ID;
+		$meta = array(
+			'version_label' => (string) get_post_meta( $id, ORGAHB_Metaboxes::META_VERSION_LABEL, true ),
+			'change_log'    => (string) get_post_meta( $id, ORGAHB_Metaboxes::META_CHANGE_LOG, true ),
+			'valid_from'    => (string) get_post_meta( $id, ORGAHB_Metaboxes::META_VALID_FROM, true ),
+			'valid_until'   => (string) get_post_meta( $id, ORGAHB_Metaboxes::META_VALID_UNTIL, true ),
+			'next_review'   => (string) get_post_meta( $id, ORGAHB_Buildings::META_NEXT_REVIEW, true ),
+			'owner_name'    => (string) get_the_author_meta( 'display_name', $post->post_author ),
+			'requires_ack'  => (bool) get_post_meta( $id, ORGAHB_Metaboxes::META_REQUIRES_ACK, true ),
+		);
+
+		if ( 'process' === $content_type ) {
+			$image_id = (int) get_post_meta( $id, ORGAHB_Metaboxes::META_PROCESS_IMAGE_ID, true );
+			$meta['is_field_executable'] = (bool) get_post_meta( $id, ORGAHB_Metaboxes::META_IS_FIELD_EXECUTABLE, true );
+			$meta['image_url']           = $image_id ? (string) wp_get_attachment_url( $image_id ) : '';
+			$meta['hotspots_json']       = (string) get_post_meta( $id, ORGAHB_Metaboxes::META_HOTSPOTS_JSON, true );
+
+			if ( $image_id && 'image/svg+xml' === get_post_mime_type( $image_id ) ) {
+				$meta['image_svg_inline'] = class_exists( 'ORGAHB_SVG' )
+					? ORGAHB_SVG::get_safe_inline( $image_id )
+					: '';
+			}
+		}
+
+		if ( 'document' === $content_type ) {
+			$att_id = (int) get_post_meta( $id, ORGAHB_Metaboxes::META_CURRENT_ATTACHMENT_ID, true );
+			$meta['display_mode']   = (string) get_post_meta( $id, ORGAHB_Metaboxes::META_DOCUMENT_DISPLAY_MODE, true ) ?: 'pdf_inline';
+			$meta['document_mime']  = (string) get_post_meta( $id, ORGAHB_Metaboxes::META_DOCUMENT_MIME, true );
+			$meta['attachment_url'] = $att_id ? (string) wp_get_attachment_url( $att_id ) : '';
+		}
+
+		return array(
+			'content_id'   => $id,
+			'title'        => $post->post_title,
+			'content_type' => $content_type,
+			'status'       => $post->post_status,
+			'meta'         => $meta,
+		);
+	}
+
+	/**
+	 * Recursively overlays user_has_acked on page and document items in the tree.
+	 *
+	 * @param array<int, array> $sections
+	 * @param int               $user_id
+	 * @return array<int, array>
+	 */
+	private static function overlay_tree_acks( array $sections, int $user_id ): array {
+		foreach ( $sections as &$section ) {
+			foreach ( $section['items'] as &$item ) {
+				if ( in_array( $item['content_type'], array( 'page', 'document' ), true ) ) {
+					$item['meta']['user_has_acked'] = ORGAHB_Acknowledgments::user_has_acked(
+						$user_id,
+						$item['content_id']
+					);
+				}
+			}
+			unset( $item );
+			if ( ! empty( $section['children'] ) ) {
+				$section['children'] = self::overlay_tree_acks( $section['children'], $user_id );
+			}
+		}
+		unset( $section );
+		return $sections;
 	}
 
 	// ────────────────────────────────────────────────────────────────────────────
