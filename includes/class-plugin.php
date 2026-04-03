@@ -42,6 +42,7 @@ final class ORGAHB_Plugin {
 	 */
 	private function __construct() {
 		$this->load_textdomain();
+		$this->maybe_sync_caps();
 		$this->require_components();
 		$this->init_components();
 	}
@@ -58,6 +59,24 @@ final class ORGAHB_Plugin {
 	 *
 	 * @return void
 	 */
+	/**
+	 * Re-syncs custom capabilities to the administrator role if they are missing.
+	 *
+	 * Activation hooks can silently fail to persist caps (e.g. when the roles
+	 * table is cold-cached or activation fires before the DB is fully ready).
+	 * This guard runs on every `plugins_loaded` and fixes that in O(1) — the
+	 * cap check is a simple array key lookup, and register_roles() is only
+	 * called when something is actually missing.
+	 *
+	 * @return void
+	 */
+	private function maybe_sync_caps(): void {
+		$administrator = get_role( 'administrator' );
+		if ( $administrator && ! $administrator->has_cap( 'edit_orgahb_contents' ) ) {
+			ORGAHB_Capabilities::register_roles();
+		}
+	}
+
 	private function load_textdomain(): void {
 		load_plugin_textdomain(
 			'orgahb-manager',

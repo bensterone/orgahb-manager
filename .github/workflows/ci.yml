@@ -40,7 +40,7 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install npm dependencies
+      - name: Install npm dependencies (also runs postinstall → copies PDF.js worker)
         run: npm ci
 
       - name: Build
@@ -48,9 +48,10 @@ jobs:
 
       - name: Assert expected output files exist
         run: |
-          test -f assets/dist/handbook-tree.js   || (echo "handbook-tree.js missing"   && exit 1)
-          test -f assets/dist/handbook-viewer.js  || (echo "handbook-viewer.js missing"  && exit 1)
-          test -f assets/dist/process-editor.js   || (echo "process-editor.js missing"   && exit 1)
-          test -f assets/dist/admin-shell.js      || (echo "admin-shell.js missing"      && exit 1)
-          test -f assets/dist/admin-qr.js         || (echo "admin-qr.js missing"         && exit 1)
-          echo "All expected bundles present."
+          test -f assets/dist/handbook-tree.js            || (echo "handbook-tree.js missing"            && exit 1)
+          test -f assets/dist/handbook-viewer.js           || (echo "handbook-viewer.js missing"           && exit 1)
+          test -f assets/dist/process-editor.js            || (echo "process-editor.js missing"            && exit 1)
+          test -f assets/dist/admin-shell.js               || (echo "admin-shell.js missing"               && exit 1)
+          test -f assets/dist/admin-qr.js                  || (echo "admin-qr.js missing"                  && exit 1)
+          test -f assets/pdfjs/pdf.worker.min.mjs          || (echo "pdf.worker.min.mjs missing"           && exit 1)
+          echo "All expected bundles and PDF worker present."

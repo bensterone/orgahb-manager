@@ -7,7 +7,7 @@
  * window.orgahbAdminConfig is localised by ORGAHB_Admin::enqueue_assets().
  */
 
-import { createRoot } from 'react-dom/client';
+import { createRoot } from '@wordpress/element';
 import App from './App';
 
 document.addEventListener( 'DOMContentLoaded', () => {

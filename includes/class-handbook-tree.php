@@ -63,7 +63,7 @@ final class ORGAHB_Handbook_Tree {
 		wp_enqueue_script(
 			'orgahb-handbook-tree',
 			$dist . 'handbook-tree.js',
-			array(),
+			array( 'wp-element', 'wp-api-fetch', 'wp-i18n' ),
 			$version,
 			true
 		);

@@ -1027,17 +1027,17 @@ final class ORGAHB_REST_API {
 		}
 	}
 
+	/** @return void */
+	public static function invalidate_sections_tree_cache(): void {
+		delete_transient( 'orgahb_sections_tree_structure' );
+	}
+
 	/**
 	 * Deletes the cached structural bundle for a building.
 	 *
 	 * @param int $building_id
 	 * @return void
 	 */
-	/** @return void */
-	public static function invalidate_sections_tree_cache(): void {
-		delete_transient( 'orgahb_sections_tree_structure' );
-	}
-
 	public static function invalidate_bundle_cache( int $building_id ): void {
 		delete_transient( self::BUNDLE_TRANSIENT_PREFIX . $building_id );
 	}

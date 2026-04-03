@@ -127,7 +127,7 @@ final class ORGAHB_Admin {
 			wp_enqueue_script(
 				'orgahb-admin-shell',
 				ORGAHB_PLUGIN_URL . 'assets/dist/admin-shell.js',
-				array( 'wp-api-fetch' ),
+				array( 'wp-element', 'wp-api-fetch' ),
 				ORGAHB_VERSION,
 				true
 			);

@@ -12,7 +12,7 @@
  * window.orgahbProcessEditor is localised by ORGAHB_Metaboxes::enqueue_assets().
  */
 
-import { createRoot } from 'react-dom/client';
+import { createRoot } from '@wordpress/element';
 import App from './App';
 
 document.addEventListener( 'DOMContentLoaded', () => {

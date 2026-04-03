@@ -129,6 +129,20 @@ final class ORGAHB_Capabilities {
 			}
 		}
 
+		// Additional meta-mapped caps WordPress derives from capability_type.
+		$caps['create_orgahb_contents']          = true;
+		$caps['create_orgahb_buildings']         = true;
+		$caps['edit_private_orgahb_contents']    = true;
+		$caps['edit_published_orgahb_contents']  = true;
+		$caps['delete_private_orgahb_contents']  = true;
+		$caps['delete_published_orgahb_contents'] = true;
+		$caps['delete_others_orgahb_contents']   = true;
+		$caps['edit_private_orgahb_buildings']   = true;
+		$caps['edit_published_orgahb_buildings'] = true;
+		$caps['delete_private_orgahb_buildings'] = true;
+		$caps['delete_published_orgahb_buildings'] = true;
+		$caps['delete_others_orgahb_buildings']  = true;
+
 		// Administrator-only destructive caps.
 		$caps['delete_orgahb_contents']  = true;
 		$caps['delete_orgahb_content']   = true;
@@ -136,6 +150,83 @@ final class ORGAHB_Capabilities {
 		$caps['delete_orgahb_building']  = true;
 
 		return $caps;
+	}
+
+	/**
+	 * All orgahb primitive caps — used by the map_meta_cap filter.
+	 *
+	 * @var string[]|null
+	 */
+	private static ?array $orgahb_cap_keys = null;
+
+	/**
+	 * Registers both cap filters.
+	 *
+	 * @return void
+	 */
+	public static function init(): void {
+		add_filter( 'map_meta_cap',  array( self::class, 'map_orgahb_caps' ), 1, 4 );
+		add_filter( 'user_has_cap',  array( self::class, 'grant_caps_filter' ), 1, 4 );
+	}
+
+	/**
+	 * Maps any orgahb cap to `manage_options` for administrators.
+	 *
+	 * When WordPress checks e.g. `current_user_can('edit_orgahb_contents')`:
+	 *  1. map_meta_cap fires — if user is admin, we return ['manage_options'].
+	 *  2. WordPress then checks if `manage_options` is in allcaps — it is for admins.
+	 *  3. Access granted without touching role storage at all.
+	 *
+	 * For non-admins the original $caps array is returned unchanged, so our
+	 * custom roles continue to work via the standard user_has_cap path.
+	 *
+	 * @param string[] $caps    Primitive caps required.
+	 * @param string   $cap     The cap being checked.
+	 * @param int      $user_id User ID.
+	 * @param array    $args    Additional args.
+	 * @return string[]
+	 */
+	public static function map_orgahb_caps( array $caps, string $cap, int $user_id, array $args ): array {
+		// Build the cap key list once.
+		if ( null === self::$orgahb_cap_keys ) {
+			self::$orgahb_cap_keys = array_keys( self::all_caps() );
+		}
+
+		if ( ! in_array( $cap, self::$orgahb_cap_keys, true ) ) {
+			return $caps;
+		}
+
+		$user = get_userdata( $user_id );
+		if ( $user && in_array( 'administrator', (array) $user->roles, true ) ) {
+			// Map to a cap the administrator role always has.
+			return array( 'manage_options' );
+		}
+
+		return $caps;
+	}
+
+	/**
+	 * Dynamically grants all orgahb capabilities to any user with manage_options.
+	 *
+	 * Belt-and-suspenders alongside map_orgahb_caps.
+	 *
+	 * @param bool[]   $allcaps All caps currently assigned to the user.
+	 * @param string[] $caps    Primitive caps being checked.
+	 * @param array    $args    Check arguments.
+	 * @param mixed    $user    The user object.
+	 * @return bool[]
+	 */
+	public static function grant_caps_filter( array $allcaps, array $caps, array $args, $user ): array {
+		$is_admin = ! empty( $allcaps['manage_options'] )
+			|| ( $user instanceof WP_User && in_array( 'administrator', (array) $user->roles, true ) );
+
+		if ( $is_admin ) {
+			foreach ( self::all_caps() as $cap => $granted ) {
+				$allcaps[ $cap ] = $granted;
+			}
+		}
+
+		return $allcaps;
 	}
 
 	/**

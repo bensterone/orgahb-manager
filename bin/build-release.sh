@@ -31,6 +31,8 @@ TMP_DIR="/tmp/${PLUGIN_SLUG}-release"
 echo "==> Building release: ${PLUGIN_SLUG} v${VERSION}"
 
 # ── 1. JS build ───────────────────────────────────────────────────────────────
+# npm ci runs the postinstall script which copies the PDF.js worker to
+# assets/pdfjs/pdf.worker.min.mjs — required for inline PDF viewing.
 echo "--> npm ci + build"
 npm ci --silent
 npm run build --silent
@@ -43,40 +45,49 @@ composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader -
 rm -rf "${TMP_DIR}"
 mkdir -p "${TMP_DIR}/${PLUGIN_SLUG}"
 
-rsync -a \
-  --exclude='.git' \
-  --exclude='.github' \
-  --exclude='.claude' \
-  --exclude='node_modules' \
-  --exclude='src' \
-  --exclude='bin' \
-  --exclude='specs_old' \
-  --exclude='dist' \
-  --exclude='vite.config.js' \
-  --exclude='package.json' \
-  --exclude='package-lock.json' \
-  --exclude='composer.json' \
-  --exclude='orgahb_manager_spec.md' \
-  --exclude='README.md' \
-  --exclude='wp-cli.phar' \
-  --exclude='*.log' \
-  --exclude='.env' \
-  --exclude='.gitignore' \
-  --exclude='.gitattributes' \
-  . "${TMP_DIR}/${PLUGIN_SLUG}/"
+# Excluded paths (no rsync on Windows — use cp + selective delete)
+EXCLUDES=(
+  '.git' '.github' '.claude' 'node_modules' 'src' 'bin' 'specs_old' 'dist'
+  'vite.config.js' 'package.json' 'package-lock.json' 'composer.json'
+  'orgahb_manager_spec.md' 'README.md' 'wp-cli.phar'
+  '.env' '.gitignore' '.gitattributes'
+)
 
-# ── 4. Restore production composer autoloader ──────────────────────────────────
-# (already copied by rsync above, but re-run to ensure optimised classmap)
+cp -r . "${TMP_DIR}/${PLUGIN_SLUG}/"
+
+# ── 4. Optimise autoloader before stripping dev files ─────────────────────────
 echo "--> optimise autoloader in temp dir"
 (cd "${TMP_DIR}/${PLUGIN_SLUG}" && composer dump-autoload --no-dev --optimize --quiet)
 
-# ── 5. Remove composer.json from the release (lock is enough for auditing) ─────
+# ── 5. Strip excluded paths and composer.json from the release ────────────────
+for exc in "${EXCLUDES[@]}"; do
+  rm -rf "${TMP_DIR}/${PLUGIN_SLUG}/${exc}"
+done
 rm -f "${TMP_DIR}/${PLUGIN_SLUG}/composer.json"
 
-# ── 6. Create zip ─────────────────────────────────────────────────────────────
+# Remove any leftover *.log files
+find "${TMP_DIR}/${PLUGIN_SLUG}" -name "*.log" -delete
+
+# ── 6. Create zip (Python — guarantees forward-slash entry paths on Linux) ─────
 mkdir -p "${OUT_DIR}"
-(cd "${TMP_DIR}" && zip -r "${OLDPWD}/${OUT_DIR}/${ZIP_NAME}" "${PLUGIN_SLUG}/" -q)
+ABS_OUT="$(pwd)/${OUT_DIR}/${ZIP_NAME}"
+python -c "
+import zipfile, os, sys
+
+src  = sys.argv[1]   # /tmp/orgahb-manager-release/orgahb-manager
+dest = sys.argv[2]   # dist/orgahb-manager-1.0.0.zip
+slug = os.path.basename(src)
+
+with zipfile.ZipFile(dest, 'w', compression=zipfile.ZIP_DEFLATED) as zf:
+    for dirpath, dirnames, filenames in os.walk(src):
+        for filename in filenames:
+            abs_path  = os.path.join(dirpath, filename)
+            # Always use forward slashes — required for correct extraction on Linux
+            arc_name  = slug + '/' + os.path.relpath(abs_path, src).replace(os.sep, '/')
+            zf.write(abs_path, arc_name)
+print('zip ok:', dest)
+" "${TMP_DIR}/${PLUGIN_SLUG}" "${ABS_OUT}"
 rm -rf "${TMP_DIR}"
 
 echo "==> Release zip: ${OUT_DIR}/${ZIP_NAME}"
-echo "    $(du -sh "${OUT_DIR}/${ZIP_NAME}" | cut -f1)"
+ls -lh "${OUT_DIR}/${ZIP_NAME}"

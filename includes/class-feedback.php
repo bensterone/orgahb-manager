@@ -140,7 +140,7 @@ final class ORGAHB_Feedback {
 		$lines[] = sprintf(
 			/* translators: URL */
 			__( 'View reports: %s', 'orgahb-manager' ),
-			admin_url( 'admin.php?page=orgahb-reports&type=observations&building_id=' . $building->ID )
+			admin_url( 'admin.php?page=orgahb-reports&report_type=observations&building_id=' . $building->ID )
 		);
 
 		wp_mail( $to, $subject, implode( "\n", $lines ) );

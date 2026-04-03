@@ -233,7 +233,7 @@ final class ORGAHB_Metaboxes {
 			wp_enqueue_script(
 				'orgahb-process-editor',
 				ORGAHB_PLUGIN_URL . 'assets/dist/process-editor.js',
-				array(),
+				array( 'wp-element' ),
 				ORGAHB_VERSION,
 				true
 			);

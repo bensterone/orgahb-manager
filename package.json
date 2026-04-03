@@ -4,6 +4,7 @@
 	"description": "OrgaHB Manager — Organisational Handbook WordPress plugin",
 	"private": true,
 	"scripts": {
+		"postinstall": "node -e \"const fs=require('fs');fs.mkdirSync('assets/pdfjs',{recursive:true});fs.copyFileSync('node_modules/pdfjs-dist/build/pdf.worker.min.mjs','assets/pdfjs/pdf.worker.min.mjs');\"",
 		"dev": "vite --port 3000",
 		"build": "vite build",
 		"watch": "vite build --watch",

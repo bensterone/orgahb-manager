@@ -72,11 +72,11 @@ wp_add_inline_script(
 	'after'
 );
 
-// Handbook viewer bundle (React + app bundled together).
+// Handbook viewer bundle — React comes from wp-element (WP's bundled React).
 wp_enqueue_script(
 	'orgahb-handbook-viewer',
 	$dist_url . 'handbook-viewer.js',
-	array( 'wp-api-fetch', 'wp-i18n' ),
+	array( 'wp-element', 'wp-api-fetch', 'wp-i18n' ),
 	$ver,
 	true   // load in footer
 );

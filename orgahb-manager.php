@@ -36,6 +36,13 @@ require_once ORGAHB_PLUGIN_DIR . 'includes/class-cpt.php';
 require_once ORGAHB_PLUGIN_DIR . 'admin/class-admin.php';
 require_once ORGAHB_PLUGIN_DIR . 'includes/class-plugin.php';
 
+// ── Capability filter — registered immediately at file load time ─────────────
+// Must be in place before any cap check fires (admin_init, REST, etc.).
+// Grants the full orgahb cap set dynamically to any user with manage_options
+// so that the CPT list/edit screens are always accessible to administrators,
+// regardless of whether activation persisted caps to the roles table.
+ORGAHB_Capabilities::init();
+
 // ── Lifecycle hooks ──────────────────────────────────────────────────────────
 register_activation_hook( __FILE__, array( 'ORGAHB_Install', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'ORGAHB_Install', 'deactivate' ) );

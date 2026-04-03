@@ -1,4 +1,4 @@
-import { createRoot } from 'react-dom/client';
+import { createRoot } from '@wordpress/element';
 import { setup } from '@shared/api';
 import App from './App.jsx';
 
