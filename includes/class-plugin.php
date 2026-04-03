@@ -71,8 +71,24 @@ final class ORGAHB_Plugin {
 	 * @return void
 	 */
 	private function maybe_sync_caps(): void {
+		// Re-register roles if administrator is missing a key cap (fresh install /
+		// cap storage failure), or if the editor role is missing a generated cap
+		// added in a later version (upgrade scenario).
+		$needs_sync = false;
+
 		$administrator = get_role( 'administrator' );
-		if ( $administrator && ! $administrator->has_cap( 'edit_orgahb_contents' ) ) {
+		if ( ! $administrator || ! $administrator->has_cap( 'edit_orgahb_contents' ) ) {
+			$needs_sync = true;
+		}
+
+		if ( ! $needs_sync ) {
+			$editor = get_role( 'orgahb_editor' );
+			if ( ! $editor || ! $editor->has_cap( 'edit_published_orgahb_contents' ) ) {
+				$needs_sync = true;
+			}
+		}
+
+		if ( $needs_sync ) {
 			ORGAHB_Capabilities::register_roles();
 		}
 	}

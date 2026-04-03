@@ -216,13 +216,11 @@ export function getItemBacklinks( itemId ) {
 // ── Page content ──────────────────────────────────────────────────────────────
 
 /**
- * Fetches rendered post content for a handbook page via WP's native REST API.
+ * Fetches rendered post content for a handbook page or document.
  *
- * @param {number} pageId  orgahb_page post ID.
+ * @param {number} itemId  orgahb_page / orgahb_document post ID.
  * @returns {{ content: { rendered: string }, excerpt: { rendered: string } }}
  */
-export function getPageContent( pageId ) {
-	return apiFetch( {
-		path: `/wp/v2/orgahb-pages/${pageId}?_fields=content,excerpt`,
-	} );
+export function getPageContent( itemId ) {
+	return apiFetch( { path: `orgahb/v1/items/${itemId}/content` } );
 }

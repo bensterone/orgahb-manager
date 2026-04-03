@@ -33,7 +33,7 @@ export default function App() {
 
 	// Load buildings list on mount.
 	useEffect( () => {
-		apiFetch( { path: '/wp/v2/orgahb-buildings?per_page=100&_fields=id,title,slug' } )
+		apiFetch( { path: 'orgahb/v1/buildings' } )
 			.then( ( data ) => setBuildings( data ) )
 			.catch( () => setError( 'Failed to load buildings.' ) );
 	}, [] );

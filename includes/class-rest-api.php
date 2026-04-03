@@ -239,6 +239,23 @@ final class ORGAHB_REST_API {
 			),
 		) );
 
+		// GET /buildings — list all published buildings (replaces wp/v2/orgahb-buildings).
+		register_rest_route( $ns, '/buildings', array(
+			'methods'             => 'GET',
+			'callback'            => array( self::class, 'get_buildings_list' ),
+			'permission_callback' => array( self::class, 'can_read_content' ),
+		) );
+
+		// GET /items/{id}/content — rendered post_content for a page/document.
+		register_rest_route( $ns, '/items/(?P<id>\d+)/content', array(
+			'methods'             => 'GET',
+			'callback'            => array( self::class, 'get_item_content' ),
+			'permission_callback' => array( self::class, 'can_read_content' ),
+			'args'                => array(
+				'id' => array( 'required' => true, 'sanitize_callback' => 'absint' ),
+			),
+		) );
+
 		// GET /sections/tree — full orgahb_section hierarchy with content items.
 		register_rest_route( $ns, '/sections/tree', array(
 			'methods'             => 'GET',
@@ -284,6 +301,67 @@ final class ORGAHB_REST_API {
 	/** @return true|WP_Error */
 	public static function can_manage_buildings(): true|WP_Error {
 		return current_user_can( 'manage_orgahb_buildings' ) ? true : self::forbidden();
+	}
+
+	// ────────────────────────────────────────────────────────────────────────────
+	// Handlers: building list + item content
+	// ────────────────────────────────────────────────────────────────────────────
+
+	/**
+	 * GET /buildings
+	 *
+	 * Returns all published buildings. Used by the admin shell building selector.
+	 * Replaces /wp/v2/orgahb-buildings so access is gated by read_orgahb_content
+	 * rather than the CPT capability map.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public static function get_buildings_list(): WP_REST_Response {
+		$posts = get_posts( array(
+			'post_type'      => 'orgahb_building',
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'orderby'        => 'title',
+			'order'          => 'ASC',
+		) );
+
+		$data = array_map( static function ( WP_Post $post ): array {
+			return array(
+				'id'    => $post->ID,
+				'title' => array( 'rendered' => esc_html( $post->post_title ) ),
+				'slug'  => $post->post_name,
+			);
+		}, $posts );
+
+		return rest_ensure_response( $data );
+	}
+
+	/**
+	 * GET /items/{id}/content
+	 *
+	 * Returns rendered post_content for a handbook page or document.
+	 * Replaces /wp/v2/orgahb-pages/{id} so access is gated by read_orgahb_content.
+	 *
+	 * @param WP_REST_Request $request
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public static function get_item_content( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		$id   = $request->get_param( 'id' );
+		$post = get_post( $id );
+
+		if ( ! $post || ! in_array( $post->post_type, array( 'orgahb_page', 'orgahb_document', 'orgahb_process' ), true ) ) {
+			return self::not_found( __( 'Content item not found.', 'orgahb-manager' ) );
+		}
+
+		if ( 'publish' !== $post->post_status ) {
+			return self::not_found( __( 'Content item not found.', 'orgahb-manager' ) );
+		}
+
+		return rest_ensure_response( array(
+			'id'      => $post->ID,
+			'content' => array( 'rendered' => apply_filters( 'the_content', $post->post_content ) ),
+			'excerpt' => array( 'rendered' => apply_filters( 'the_excerpt', get_the_excerpt( $post ) ) ),
+		) );
 	}
 
 	// ────────────────────────────────────────────────────────────────────────────
