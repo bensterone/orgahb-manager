@@ -8,6 +8,9 @@ assets/dist/
 # PDF.js worker (large binary blob, fetched via npm postinstall or manually)
 assets/pdfjs/
 
+# Release build output
+dist/
+
 # WP-CLI
 wp-cli.phar
 /tmp/wp-cli.phar

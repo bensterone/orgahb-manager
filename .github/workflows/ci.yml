@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  php-lint:
+    name: PHP syntax check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Check PHP syntax (all plugin files)
+        run: find includes admin templates -name "*.php" | xargs php -l
+
+      - name: Check main plugin file
+        run: php -l orgahb-manager.php && php -l uninstall.php
+
+  js-build:
+    name: JS build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Assert expected output files exist
+        run: |
+          test -f assets/dist/handbook-tree.js   || (echo "handbook-tree.js missing"   && exit 1)
+          test -f assets/dist/handbook-viewer.js  || (echo "handbook-viewer.js missing"  && exit 1)
+          test -f assets/dist/process-editor.js   || (echo "process-editor.js missing"   && exit 1)
+          test -f assets/dist/admin-shell.js      || (echo "admin-shell.js missing"      && exit 1)
+          test -f assets/dist/admin-qr.js         || (echo "admin-qr.js missing"         && exit 1)
+          echo "All expected bundles present."
