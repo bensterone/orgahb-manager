@@ -154,9 +154,34 @@ final class ORGAHB_Admin {
 		if ( ! current_user_can( 'read_orgahb_content' ) ) {
 			wp_die( esc_html__( 'You do not have permission to access this page.', 'orgahb-manager' ) );
 		}
+
+		// Detect whether the [orgahb_handbook] shortcode is used on any published page.
+		$handbook_pages = get_posts( array(
+			'post_type'      => 'page',
+			'post_status'    => 'publish',
+			'posts_per_page' => 1,
+			'fields'         => 'ids',
+			's'              => '[orgahb_handbook]',
+		) );
+		$has_handbook_page = ! empty( $handbook_pages );
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'Handbook', 'orgahb-manager' ); ?></h1>
+
+			<?php if ( ! $has_handbook_page && current_user_can( 'manage_options' ) ) : ?>
+			<div class="notice notice-info">
+				<p>
+					<strong><?php esc_html_e( 'Set up the handbook viewer:', 'orgahb-manager' ); ?></strong>
+					<?php esc_html_e( 'Create a WordPress page and add the shortcode', 'orgahb-manager' ); ?>
+					<code>[orgahb_handbook]</code>
+					<?php esc_html_e( 'to give staff access to the full desktop handbook.', 'orgahb-manager' ); ?>
+					<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=page' ) ); ?>">
+						<?php esc_html_e( 'Create a page now →', 'orgahb-manager' ); ?>
+					</a>
+				</p>
+			</div>
+			<?php endif; ?>
+
 			<div id="orgahb-admin-shell"></div>
 		</div>
 		<?php

@@ -123,6 +123,33 @@ final class ORGAHB_Acknowledgments {
 	}
 
 	/**
+	 * Returns true if the user has acknowledged the given post on any revision.
+	 *
+	 * Used by the sections tree viewer where the specific revision is not known
+	 * up front (lightweight "has this person ever acked this document?" check).
+	 *
+	 * @param int $user_id
+	 * @param int $post_id
+	 * @return bool
+	 */
+	public static function user_has_acked( int $user_id, int $post_id ): bool {
+		global $wpdb;
+
+		$count = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(*)
+				 FROM {$wpdb->prefix}orgahb_acknowledgments
+				 WHERE post_id = %d
+				   AND user_id = %d",
+				$post_id,
+				$user_id
+			)
+		);
+
+		return (int) $count > 0;
+	}
+
+	/**
 	 * Checks whether a user has acknowledged a specific revision of a post.
 	 *
 	 * @param int $post_id
