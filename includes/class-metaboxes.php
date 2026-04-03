@@ -110,15 +110,9 @@ final class ORGAHB_Metaboxes {
 
 		add_meta_box(
 			'orgahb-process-diagram',
-			__( 'Diagram Asset', 'orgahb-manager' ),
+			__( 'Diagram & Hotspots', 'orgahb-manager' ),
 			array( self::class, 'render_process_diagram' ),
 			'orgahb_process', 'normal', 'high'
-		);
-		add_meta_box(
-			'orgahb-process-hotspots',
-			__( 'Hotspot JSON', 'orgahb-manager' ),
-			array( self::class, 'render_process_hotspots' ),
-			'orgahb_process', 'normal', 'default'
 		);
 		add_meta_box(
 			'orgahb-process-meta',
@@ -206,6 +200,7 @@ final class ORGAHB_Metaboxes {
 			array(
 				'selectImageTitle'  => __( 'Select Diagram Image', 'orgahb-manager' ),
 				'useImageButton'    => __( 'Use this image', 'orgahb-manager' ),
+				'changeImageButton' => __( 'Change Image', 'orgahb-manager' ),
 				'selectFileTitle'   => __( 'Select Document File', 'orgahb-manager' ),
 				'useFileButton'     => __( 'Use this file', 'orgahb-manager' ),
 				'noFile'            => __( 'No file selected', 'orgahb-manager' ),
@@ -439,6 +434,7 @@ final class ORGAHB_Metaboxes {
 		$src_fmt    = (string) get_post_meta( $post->ID, self::META_SOURCE_FORMAT, true );
 		$src_att    = (int) get_post_meta( $post->ID, self::META_SOURCE_ATTACHMENT_ID, true );
 		$executable = (bool) get_post_meta( $post->ID, self::META_IS_FIELD_EXECUTABLE, true );
+		$json       = (string) get_post_meta( $post->ID, self::META_HOTSPOTS_JSON, true );
 
 		$notation_options = array(
 			''               => __( '— select —', 'orgahb-manager' ),
@@ -457,7 +453,12 @@ final class ORGAHB_Metaboxes {
 		?>
 		<table class="form-table orgahb-meta-table">
 			<tr>
-				<th scope="row"><?php esc_html_e( 'Diagram Image', 'orgahb-manager' ); ?></th>
+				<th scope="row">
+					<?php esc_html_e( 'Diagram Image', 'orgahb-manager' ); ?>
+					<p class="description" style="font-weight:normal;">
+						<?php esc_html_e( 'The image displayed to users in the handbook viewer. Select it, then draw rectangles below to mark hotspot areas.', 'orgahb-manager' ); ?>
+					</p>
+				</th>
 				<td>
 					<input type="hidden" id="orgahb_process_image_id" name="orgahb_process_image_id"
 					       value="<?php echo esc_attr( (string) ( $image_id ?: '' ) ); ?>">
@@ -470,8 +471,8 @@ final class ORGAHB_Metaboxes {
 					        data-target="orgahb_process_image_id"
 					        data-preview="orgahb-process-image-preview">
 						<?php echo $image_id
-							? esc_html__( 'Replace Image', 'orgahb-manager' )
-							: esc_html__( 'Upload Image', 'orgahb-manager' ); ?>
+							? esc_html__( 'Change Image', 'orgahb-manager' )
+							: esc_html__( 'Select Image', 'orgahb-manager' ); ?>
 					</button>
 					<?php if ( $image_id ) : ?>
 					<button type="button" class="button orgahb-remove-image"
@@ -511,7 +512,12 @@ final class ORGAHB_Metaboxes {
 				</td>
 			</tr>
 			<tr>
-				<th scope="row"><?php esc_html_e( 'Source File', 'orgahb-manager' ); ?></th>
+				<th scope="row">
+					<?php esc_html_e( 'Editable Source File', 'orgahb-manager' ); ?>
+					<p class="description" style="font-weight:normal;">
+						<?php esc_html_e( 'Optional. The original editable file (e.g. .drawio) for future revisions. Not shown to users.', 'orgahb-manager' ); ?>
+					</p>
+				</th>
 				<td>
 					<input type="hidden" id="orgahb_source_attachment_id" name="orgahb_source_attachment_id"
 					       value="<?php echo esc_attr( (string) ( $src_att ?: '' ) ); ?>">
@@ -547,19 +553,13 @@ final class ORGAHB_Metaboxes {
 				</td>
 			</tr>
 		</table>
-		<?php
-	}
 
-	/**
-	 * Process Hotspot JSON metabox — raw JSON editor (process editor React app
-	 * will manage this in a later phase; this provides a functional fallback).
-	 *
-	 * @param WP_Post $post
-	 * @return void
-	 */
-	public static function render_process_hotspots( WP_Post $post ): void {
-		$json = (string) get_post_meta( $post->ID, self::META_HOTSPOTS_JSON, true );
-		?>
+		<hr>
+		<h3 style="margin: 8px 0 4px;"><?php esc_html_e( 'Hotspot Editor', 'orgahb-manager' ); ?></h3>
+		<p class="description" style="margin-bottom:8px;">
+			<?php esc_html_e( 'Draw rectangles directly on the diagram to create hotspots. Click a hotspot to edit its label, kind, and target.', 'orgahb-manager' ); ?>
+		</p>
+
 		<?php /* Mount point for the React process editor. */ ?>
 		<div id="orgahb-process-editor-mount"></div>
 
@@ -571,7 +571,7 @@ final class ORGAHB_Metaboxes {
 		<noscript>
 			<p class="description">
 				<?php esc_html_e(
-					'JavaScript is required for the visual hotspot editor. With JS disabled you can edit the raw JSON below.',
+					'JavaScript is required for the visual hotspot editor.',
 					'orgahb-manager'
 				); ?>
 			</p>
@@ -1217,7 +1217,8 @@ final class ORGAHB_Metaboxes {
 			default   => new \WP_Error( 'orgahb_unknown_action', __( 'Unknown workflow action.', 'orgahb-manager' ) ),
 		};
 
-		$redirect = get_edit_post_link( $post_id, 'url' );
+		$redirect = get_edit_post_link( $post_id, 'url' )
+			?: admin_url( 'edit.php?post_type=' . get_post_type( $post_id ) );
 
 		if ( is_wp_error( $result ) ) {
 			$redirect = add_query_arg( 'orgahb_wf_error', rawurlencode( $result->get_error_message() ), $redirect );

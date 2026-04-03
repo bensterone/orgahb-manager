@@ -2,11 +2,11 @@
  * Process hotspot editor — main component.
  *
  * Renders an interactive overlay on top of the process diagram image.
- * Hotspots can be added, moved, resized, and deleted. All changes are written
- * back to the hidden <textarea id="orgahb_hotspots_json"> so the WP save
- * form picks them up unchanged.
+ * Hotspots are created by drawing rectangles (mousedown → drag → mouseup).
+ * Existing hotspots can be moved and resized via interact.js.
+ * All changes are written back to the hidden <textarea id="orgahb_hotspots_json">
+ * so the WP save form picks them up unchanged.
  *
- * Uses interact.js (bundled) for drag + resize.
  * Spec: §17 Hotspot Fields and Coordinate Rules.
  */
 
@@ -23,12 +23,10 @@ function generateId() {
 	return `hs_${ Date.now() }_${ _idCounter }`;
 }
 
-/** Clamp a value to [min, max]. */
 function clamp( value, min, max ) {
 	return Math.max( min, Math.min( max, value ) );
 }
 
-/** Parse hotspot JSON from the textarea, returning [] on any error. */
 function parseHotspots( json ) {
 	if ( ! json || ! json.trim() ) return [];
 	try {
@@ -39,12 +37,10 @@ function parseHotspots( json ) {
 	}
 }
 
-/** Serialise hotspots back to the textarea and trigger a synthetic change event. */
 function syncToTextarea( hotspots ) {
 	const ta = document.getElementById( 'orgahb_hotspots_json' );
 	if ( ! ta ) return;
 	ta.value = JSON.stringify( hotspots, null, 2 );
-	// Trigger change so other listeners (e.g. unsaved-changes prompts) notice.
 	ta.dispatchEvent( new Event( 'change', { bubbles: true } ) );
 }
 
@@ -54,10 +50,15 @@ export default function App( { config } ) {
 	const { imageUrl, imageId } = config;
 
 	const [ hotspots,   setHotspots   ] = useState( () => parseHotspots( config.hotspotsJson ) );
-	const [ selected,   setSelected   ] = useState( null );  // hotspot id
-	const [ imgSize,    setImgSize    ] = useState( null );   // { w, h } in px
+	const [ selected,   setSelected   ] = useState( null );
+	const [ imgSize,    setImgSize    ] = useState( null );
 	const [ noImage,    setNoImage    ] = useState( ! imageUrl );
 	const [ liveImgUrl, setLiveImgUrl ] = useState( imageUrl );
+
+	// Drawing state — live preview while dragging.
+	const [ drawing,    setDrawing    ] = useState( null );  // { x, y, w, h } in pct, or null
+	const drawStartRef = useRef( null );                     // { x_pct, y_pct }
+	const isMouseDownRef = useRef( false );
 
 	const wrapRef = useRef( null );
 	const imgRef  = useRef( null );
@@ -67,20 +68,17 @@ export default function App( { config } ) {
 		syncToTextarea( hotspots );
 	}, [ hotspots ] );
 
-	// Listen for the metabox image-picker replacing the image (custom event
-	// fired by metaboxes.js when a new image is selected via wp.media).
+	// Listen for the metabox image-picker replacing the image.
 	useEffect( () => {
 		const handler = ( e ) => {
 			setLiveImgUrl( e.detail.url );
 			setNoImage( false );
-			// Image aspect ratio may have changed — mark all hotspots as needing review.
 			setHotspots( ( prev ) => prev.map( ( hs ) => ( { ...hs, _needs_review: true } ) ) );
 		};
 		document.addEventListener( 'orgahb:process_image_changed', handler );
 		return () => document.removeEventListener( 'orgahb:process_image_changed', handler );
 	}, [] );
 
-	// Once the image loads, record its rendered pixel size.
 	const onImageLoad = useCallback( () => {
 		if ( imgRef.current ) {
 			setImgSize( {
@@ -90,16 +88,64 @@ export default function App( { config } ) {
 		}
 	}, [] );
 
-	// ── Adding a hotspot by clicking on the image ─────────────────────────────
+	// ── Draw-to-create rectangle ──────────────────────────────────────────────
 
-	const handleImageClick = useCallback( ( e ) => {
-		if ( ! imgSize ) return;
-		// Ignore if a hotspot or its controls were clicked.
-		if ( e.target !== imgRef.current ) return;
-
+	const getPctPos = useCallback( ( e ) => {
+		if ( ! imgRef.current ) return null;
 		const rect = imgRef.current.getBoundingClientRect();
-		const x_pct = clamp( ( ( e.clientX - rect.left ) / rect.width  ) * 100 - 5, 0, 90 );
-		const y_pct = clamp( ( ( e.clientY - rect.top  ) / rect.height ) * 100 - 5, 0, 90 );
+		return {
+			x_pct: clamp( ( ( e.clientX - rect.left ) / rect.width  ) * 100, 0, 100 ),
+			y_pct: clamp( ( ( e.clientY - rect.top  ) / rect.height ) * 100, 0, 100 ),
+		};
+	}, [] );
+
+	const handleMouseDown = useCallback( ( e ) => {
+		// Only start draw on the image itself or the stage, not on existing hotspots.
+		if ( e.target !== imgRef.current && ! e.target.classList.contains( 'orgahb-pe-image-wrap' ) ) return;
+		if ( ! imgSize ) return;
+		e.preventDefault();
+
+		const pos = getPctPos( e );
+		if ( ! pos ) return;
+
+		isMouseDownRef.current = true;
+		drawStartRef.current = pos;
+		setDrawing( { x: pos.x_pct, y: pos.y_pct, w: 0, h: 0 } );
+		setSelected( null );
+	}, [ imgSize, getPctPos ] );
+
+	const handleMouseMove = useCallback( ( e ) => {
+		if ( ! isMouseDownRef.current || ! drawStartRef.current ) return;
+		const pos = getPctPos( e );
+		if ( ! pos ) return;
+
+		const start = drawStartRef.current;
+		setDrawing( {
+			x: Math.min( start.x_pct, pos.x_pct ),
+			y: Math.min( start.y_pct, pos.y_pct ),
+			w: Math.abs( pos.x_pct - start.x_pct ),
+			h: Math.abs( pos.y_pct - start.y_pct ),
+		} );
+	}, [ getPctPos ] );
+
+	const handleMouseUp = useCallback( ( e ) => {
+		if ( ! isMouseDownRef.current ) return;
+		isMouseDownRef.current = false;
+
+		const pos = getPctPos( e );
+		const start = drawStartRef.current;
+		drawStartRef.current = null;
+		setDrawing( null );
+
+		if ( ! pos || ! start ) return;
+
+		const x_pct = Math.min( start.x_pct, pos.x_pct );
+		const y_pct = Math.min( start.y_pct, pos.y_pct );
+		const w_pct = Math.abs( pos.x_pct - start.x_pct );
+		const h_pct = Math.abs( pos.y_pct - start.y_pct );
+
+		// Require minimum 2% in each dimension — prevents accidental clicks.
+		if ( w_pct < 2 || h_pct < 2 ) return;
 
 		const newHotspot = {
 			id:            generateId(),
@@ -107,8 +153,8 @@ export default function App( { config } ) {
 			kind:          HOTSPOT_KINDS.STEP,
 			x_pct,
 			y_pct,
-			w_pct:         10,
-			h_pct:         10,
+			w_pct,
+			h_pct,
 			sort_order:    hotspots.length,
 			target_type:   null,
 			target_id:     null,
@@ -120,9 +166,9 @@ export default function App( { config } ) {
 
 		setHotspots( ( prev ) => [ ...prev, newHotspot ] );
 		setSelected( newHotspot.id );
-	}, [ imgSize, hotspots.length ] );
+	}, [ getPctPos, hotspots.length ] );
 
-	// ── Interact.js: drag + resize per hotspot ────────────────────────────────
+	// ── Interact.js: drag + resize for existing hotspots ─────────────────────
 
 	const setupInteract = useCallback( ( el, hsId ) => {
 		if ( ! el ) return;
@@ -177,7 +223,7 @@ export default function App( { config } ) {
 	if ( noImage ) {
 		return (
 			<div className="orgahb-pe-no-image">
-				<p>Upload a diagram image above to start adding hotspots.</p>
+				<p>Select a diagram image above to start drawing hotspots.</p>
 			</div>
 		);
 	}
@@ -186,7 +232,7 @@ export default function App( { config } ) {
 		<div className="orgahb-pe">
 			<div className="orgahb-pe-toolbar">
 				<span className="orgahb-pe-hint">
-					Click the diagram to add a hotspot. Drag to move, drag the corner to resize.
+					Draw a rectangle on the diagram to add a hotspot. Drag to move, drag the corner to resize.
 				</span>
 				<span className="orgahb-pe-count">
 					{ hotspots.length } hotspot{ hotspots.length !== 1 ? 's' : '' }
@@ -194,10 +240,13 @@ export default function App( { config } ) {
 			</div>
 
 			<div className="orgahb-pe-stage" ref={wrapRef}>
-				{/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
+				{/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
 				<div
-					className="orgahb-pe-image-wrap"
-					onClick={handleImageClick}
+					className={ `orgahb-pe-image-wrap${ imgSize ? ' is-ready' : '' }` }
+					onMouseDown={handleMouseDown}
+					onMouseMove={handleMouseMove}
+					onMouseUp={handleMouseUp}
+					onMouseLeave={handleMouseUp}
 					role="presentation"
 				>
 					<img
@@ -208,6 +257,7 @@ export default function App( { config } ) {
 						onLoad={onImageLoad}
 						draggable="false"
 					/>
+
 					{ imgSize && hotspots.map( ( hs ) => (
 						<HotspotOverlay
 							key={hs.id}
@@ -217,6 +267,20 @@ export default function App( { config } ) {
 							setupInteract={setupInteract}
 						/>
 					) ) }
+
+					{ /* Live draw preview */ }
+					{ drawing && drawing.w > 0.5 && drawing.h > 0.5 && (
+						<div
+							className="orgahb-pe-draw-preview"
+							style={ {
+								left:   `${ drawing.x }%`,
+								top:    `${ drawing.y }%`,
+								width:  `${ drawing.w }%`,
+								height: `${ drawing.h }%`,
+							} }
+							aria-hidden="true"
+						/>
+					) }
 				</div>
 			</div>
 
@@ -271,6 +335,7 @@ function HotspotOverlay( { hotspot, isSelected, onSelect, setupInteract } ) {
 				width:  `${ hotspot.w_pct }%`,
 				height: `${ hotspot.h_pct }%`,
 			} }
+			onMouseDown={ ( e ) => e.stopPropagation() }
 			onClick={ ( e ) => { e.stopPropagation(); onSelect(); } }
 			title={ hotspot.label }
 			aria-label={ hotspot.label }
@@ -314,6 +379,8 @@ function HotspotPanel( { hotspot, onChange, onDelete, onClose } ) {
 								className="regular-text"
 								value={ hotspot.label }
 								onChange={ ( e ) => onChange( { label: e.target.value } ) }
+								// eslint-disable-next-line jsx-a11y/no-autofocus
+								autoFocus
 							/>
 						</td>
 					</tr>
@@ -325,8 +392,8 @@ function HotspotPanel( { hotspot, onChange, onDelete, onClose } ) {
 								value={ hotspot.kind }
 								onChange={ ( e ) => onChange( { kind: e.target.value } ) }
 							>
-								<option value={ HOTSPOT_KINDS.STEP }>Step (log evidence)</option>
-								<option value={ HOTSPOT_KINDS.LINK }>Link (navigate)</option>
+								<option value={ HOTSPOT_KINDS.STEP }>Step — log field evidence</option>
+								<option value={ HOTSPOT_KINDS.LINK }>Link — navigate to content</option>
 							</select>
 						</td>
 					</tr>

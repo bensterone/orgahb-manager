@@ -61,6 +61,17 @@
 	pointer-events: none;
 }
 
+/* ── Draw preview rect ──────────────────────────────────────────────────────── */
+
+.orgahb-pe-draw-preview {
+	position: absolute;
+	box-sizing: border-box;
+	border: 2px dashed #2271b1;
+	background: rgba(34, 113, 177, 0.1);
+	pointer-events: none;
+	border-radius: 2px;
+}
+
 /* ── Hotspot overlays ───────────────────────────────────────────────────────── */
 
 .orgahb-pe-hotspot {

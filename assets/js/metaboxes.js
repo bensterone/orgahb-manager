@@ -106,7 +106,7 @@
 						.css( { maxWidth: '300px', height: 'auto' } )
 				);
 			}
-			btn.text( orgahbMetaboxes.useImageButton );
+			btn.text( orgahbMetaboxes.changeImageButton );
 
 			// Notify the React process editor that the image changed.
 			document.dispatchEvent( new CustomEvent( 'orgahb:process_image_changed', {
