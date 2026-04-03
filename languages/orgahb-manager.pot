@@ -1,0 +1,1298 @@
+# Copyright (C) 2026 Your Name
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: OrgaHB Manager — Organisational Handbook 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/orgahb-manager\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-04-03T06:12:19+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: orgahb-manager\n"
+
+#. Plugin Name of the plugin
+#: orgahb-manager.php
+msgid "OrgaHB Manager — Organisational Handbook"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: orgahb-manager.php
+msgid "https://github.com/your-org/orgahb-manager"
+msgstr ""
+
+#. Description of the plugin
+#: orgahb-manager.php
+msgid "A fully featured organisational handbook for small and medium-sized organisations. Self-hosted, open-source alternative to commercial handbook tools."
+msgstr ""
+
+#. Author of the plugin
+#: orgahb-manager.php
+msgid "Your Name"
+msgstr ""
+
+#: admin/class-admin.php:48
+#: admin/class-admin.php:49
+#: admin/class-admin.php:159
+msgid "Handbook"
+msgstr ""
+
+#: admin/class-admin.php:60
+#: admin/views/page-settings.php:16
+msgid "Handbook Settings"
+msgstr ""
+
+#: admin/class-admin.php:61
+#: admin/views/page-backup-export.php:201
+#: admin/views/page-backup-export.php:206
+msgid "Settings"
+msgstr ""
+
+#: admin/class-admin.php:70
+#: admin/views/page-reports.php:77
+msgid "Handbook Reports"
+msgstr ""
+
+#: admin/class-admin.php:71
+msgid "Reports"
+msgstr ""
+
+#: admin/class-admin.php:80
+#: admin/class-admin.php:81
+#: admin/views/page-backup-export.php:38
+msgid "Backup & Export"
+msgstr ""
+
+#: admin/class-admin.php:155
+#: admin/class-admin.php:170
+#: admin/class-admin.php:180
+#: admin/class-admin.php:190
+msgid "You do not have permission to access this page."
+msgstr ""
+
+#: admin/views/page-backup-export.php:20
+#: admin/views/page-print-report.php:22
+#: admin/views/page-reports.php:18
+msgid "Acknowledgments"
+msgstr ""
+
+#: admin/views/page-backup-export.php:21
+#: admin/views/page-print-report.php:23
+#: admin/views/page-reports.php:19
+msgid "Field Evidence"
+msgstr ""
+
+#: admin/views/page-backup-export.php:22
+#: admin/views/page-print-report.php:24
+#: admin/views/page-reports.php:20
+msgid "Observations"
+msgstr ""
+
+#: admin/views/page-backup-export.php:23
+#: admin/views/page-print-report.php:25
+#: admin/views/page-reports.php:21
+msgid "Bundle Mapping"
+msgstr ""
+
+#: admin/views/page-backup-export.php:24
+#: admin/views/page-print-report.php:26
+#: admin/views/page-reports.php:22
+msgid "Content Inventory"
+msgstr ""
+
+#: admin/views/page-backup-export.php:25
+#: admin/views/page-print-report.php:27
+#: admin/views/page-reports.php:23
+msgid "Review Dates"
+msgstr ""
+
+#: admin/views/page-backup-export.php:40
+msgid "Download CSV exports of all operational data before migrating or uninstalling the plugin. These exports are point-in-time snapshots — they do not replace a database backup."
+msgstr ""
+
+#: admin/views/page-backup-export.php:48
+msgid "Warning:"
+msgstr ""
+
+#: admin/views/page-backup-export.php:49
+msgid "\"Delete all plugin data on uninstall\" is currently enabled in Settings. Download your backups before deactivating and deleting the plugin."
+msgstr ""
+
+#: admin/views/page-backup-export.php:61
+#: includes/class-cpt.php:227
+#: includes/class-cpt.php:237
+msgid "Buildings"
+msgstr ""
+
+#: admin/views/page-backup-export.php:61
+msgid "Building links"
+msgstr ""
+
+#. translators: 1: import type label 2: created 3: skipped 4: errors
+#: admin/views/page-backup-export.php:64
+#, php-format
+msgid "%1$s import complete — created: %2$d, skipped: %3$d, errors: %4$d."
+msgstr ""
+
+#: admin/views/page-backup-export.php:78
+msgid "Import error:"
+msgstr ""
+
+#: admin/views/page-backup-export.php:85
+msgid "Full Backup Archive"
+msgstr ""
+
+#: admin/views/page-backup-export.php:86
+msgid "Download a complete ZIP backup of all plugin data as JSON and NDJSON files. Use this before migrating or uninstalling. Requires ZipArchive (PHP extension)."
+msgstr ""
+
+#: admin/views/page-backup-export.php:93
+msgid "Download Backup ZIP"
+msgstr ""
+
+#: admin/views/page-backup-export.php:100
+msgid "Data Exports"
+msgstr ""
+
+#: admin/views/page-backup-export.php:104
+msgid "Report"
+msgstr ""
+
+#: admin/views/page-backup-export.php:105
+msgid "Download"
+msgstr ""
+
+#: admin/views/page-backup-export.php:122
+#: admin/views/page-reports.php:133
+msgid "Download CSV"
+msgstr ""
+
+#: admin/views/page-backup-export.php:133
+msgid "CSV Import"
+msgstr ""
+
+#: admin/views/page-backup-export.php:134
+msgid "Import buildings or bundle links in bulk by uploading a CSV file. The first row must be a header row. Existing items are skipped (not updated)."
+msgstr ""
+
+#: admin/views/page-backup-export.php:143
+#: admin/views/page-backup-export.php:156
+msgid "Import Buildings"
+msgstr ""
+
+#: admin/views/page-backup-export.php:145
+msgid "Required column: title. Optional: building_code, address, areas (JSON array or pipe-separated key:Label pairs, e.g. \"heating:Heating Room|basement:Basement\")."
+msgstr ""
+
+#: admin/views/page-backup-export.php:163
+#: admin/views/page-backup-export.php:176
+msgid "Import Building Links"
+msgstr ""
+
+#: admin/views/page-backup-export.php:165
+msgid "Required columns: building (ID/slug/title), content_type (page|process|document), content (ID/slug/title). Optional: area_key, sort_order, is_featured (1/0), local_note, advisory_interval_label."
+msgstr ""
+
+#: admin/views/page-backup-export.php:186
+msgid "Database Tables"
+msgstr ""
+
+#: admin/views/page-backup-export.php:187
+msgid "The plugin creates the following custom database tables. A full database backup (mysqldump or your host's backup tool) is the authoritative backup method."
+msgstr ""
+
+#. translators: %s: settings page link
+#: admin/views/page-backup-export.php:205
+#, php-format
+msgid "Uninstall behaviour is controlled from the %s page."
+msgstr ""
+
+#: admin/views/page-print-report.php:36
+#: admin/views/page-reports.php:100
+#: includes/class-cpt.php:228
+msgid "Building"
+msgstr ""
+
+#: admin/views/page-print-report.php:40
+#: admin/views/page-reports.php:114
+msgid "From"
+msgstr ""
+
+#: admin/views/page-print-report.php:43
+#: admin/views/page-reports.php:118
+msgid "To"
+msgstr ""
+
+#: admin/views/page-print-report.php:45
+msgid "Generated"
+msgstr ""
+
+#: admin/views/page-print-report.php:46
+msgid "row"
+msgid_plural "rows"
+msgstr[0] ""
+msgstr[1] ""
+
+#: admin/views/page-print-report.php:76
+msgid "Print / Save as PDF"
+msgstr ""
+
+#: admin/views/page-print-report.php:89
+msgid "No data for the selected filters."
+msgstr ""
+
+#: admin/views/page-reports.php:80
+msgid "Report types"
+msgstr ""
+
+#: admin/views/page-reports.php:102
+msgid "— All buildings —"
+msgstr ""
+
+#: admin/views/page-reports.php:124
+msgid "Run Report"
+msgstr ""
+
+#: admin/views/page-reports.php:136
+msgid "Print / PDF"
+msgstr ""
+
+#. translators: %d: number of rows
+#: admin/views/page-reports.php:141
+#, php-format
+msgid "%d row"
+msgid_plural "%d rows"
+msgstr[0] ""
+msgstr[1] ""
+
+#: admin/views/page-reports.php:148
+msgid "No data found for the selected filters."
+msgstr ""
+
+#: admin/views/page-reports.php:174
+msgid "Select your filters and click Run Report."
+msgstr ""
+
+#: admin/views/page-settings.php:28
+msgid "QR Code Base URL"
+msgstr ""
+
+#: admin/views/page-settings.php:38
+msgid "Base URL for building QR landing pages. QR codes will link to {base_url}b/{token}. Defaults to the site home URL."
+msgstr ""
+
+#: admin/views/page-settings.php:49
+msgid "Review Reminder Days"
+msgstr ""
+
+#: admin/views/page-settings.php:59
+msgid "Number of days before a content review date at which reminder notifications are sent."
+msgstr ""
+
+#: admin/views/page-settings.php:69
+msgid "Require Reviewer Comment"
+msgstr ""
+
+#: admin/views/page-settings.php:78
+msgid "Reviewers must supply a comment when returning content for revision."
+msgstr ""
+
+#: admin/views/page-settings.php:89
+msgid "Delete Data on Uninstall"
+msgstr ""
+
+#: admin/views/page-settings.php:98
+msgid "Permanently delete all plugin data (custom tables, post meta, options) when the plugin is uninstalled."
+msgstr ""
+
+#: admin/views/page-settings.php:104
+msgid "Warning: this action cannot be undone. Disabled by default."
+msgstr ""
+
+#: includes/class-backup.php:53
+#: includes/class-export.php:59
+#: includes/class-export.php:99
+#: includes/class-import.php:53
+msgid "Access denied."
+msgstr ""
+
+#: includes/class-backup.php:57
+#: includes/class-import.php:57
+msgid "Invalid nonce."
+msgstr ""
+
+#: includes/class-backup.php:62
+msgid "The ZipArchive PHP extension is required to generate backups. Please enable it on your server."
+msgstr ""
+
+#: includes/class-backup.php:72
+msgid "Could not create backup archive."
+msgstr ""
+
+#: includes/class-buildings.php:160
+#: includes/class-buildings.php:258
+msgid "General"
+msgstr ""
+
+#: includes/class-cpt.php:103
+#: includes/class-cpt.php:113
+msgid "Handbook Pages"
+msgstr ""
+
+#: includes/class-cpt.php:104
+msgid "Handbook Page"
+msgstr ""
+
+#: includes/class-cpt.php:105
+msgid "Add New Page"
+msgstr ""
+
+#: includes/class-cpt.php:106
+msgid "Add New Handbook Page"
+msgstr ""
+
+#: includes/class-cpt.php:107
+msgid "Edit Handbook Page"
+msgstr ""
+
+#: includes/class-cpt.php:108
+msgid "New Handbook Page"
+msgstr ""
+
+#: includes/class-cpt.php:109
+msgid "View Handbook Page"
+msgstr ""
+
+#: includes/class-cpt.php:110
+msgid "Search Handbook Pages"
+msgstr ""
+
+#: includes/class-cpt.php:111
+msgid "No handbook pages found."
+msgstr ""
+
+#: includes/class-cpt.php:112
+msgid "No handbook pages found in trash."
+msgstr ""
+
+#: includes/class-cpt.php:143
+#: includes/class-cpt.php:153
+msgid "Processes"
+msgstr ""
+
+#: includes/class-cpt.php:144
+msgid "Process"
+msgstr ""
+
+#: includes/class-cpt.php:145
+#: includes/class-cpt.php:146
+msgid "Add New Process"
+msgstr ""
+
+#: includes/class-cpt.php:147
+msgid "Edit Process"
+msgstr ""
+
+#: includes/class-cpt.php:148
+msgid "New Process"
+msgstr ""
+
+#: includes/class-cpt.php:149
+msgid "View Process"
+msgstr ""
+
+#: includes/class-cpt.php:150
+msgid "Search Processes"
+msgstr ""
+
+#: includes/class-cpt.php:151
+msgid "No processes found."
+msgstr ""
+
+#: includes/class-cpt.php:152
+msgid "No processes found in trash."
+msgstr ""
+
+#: includes/class-cpt.php:183
+#: includes/class-cpt.php:193
+msgid "Documents"
+msgstr ""
+
+#: includes/class-cpt.php:184
+msgid "Document"
+msgstr ""
+
+#: includes/class-cpt.php:185
+#: includes/class-cpt.php:186
+msgid "Add New Document"
+msgstr ""
+
+#: includes/class-cpt.php:187
+msgid "Edit Document"
+msgstr ""
+
+#: includes/class-cpt.php:188
+msgid "New Document"
+msgstr ""
+
+#: includes/class-cpt.php:189
+msgid "View Document"
+msgstr ""
+
+#: includes/class-cpt.php:190
+msgid "Search Documents"
+msgstr ""
+
+#: includes/class-cpt.php:191
+msgid "No documents found."
+msgstr ""
+
+#: includes/class-cpt.php:192
+msgid "No documents found in trash."
+msgstr ""
+
+#: includes/class-cpt.php:229
+#: includes/class-cpt.php:230
+msgid "Add New Building"
+msgstr ""
+
+#: includes/class-cpt.php:231
+msgid "Edit Building"
+msgstr ""
+
+#: includes/class-cpt.php:232
+msgid "New Building"
+msgstr ""
+
+#: includes/class-cpt.php:233
+msgid "View Building"
+msgstr ""
+
+#: includes/class-cpt.php:234
+msgid "Search Buildings"
+msgstr ""
+
+#: includes/class-cpt.php:235
+msgid "No buildings found."
+msgstr ""
+
+#: includes/class-cpt.php:236
+msgid "No buildings found in trash."
+msgstr ""
+
+#. translators: 1: site name, 2: count of items, 3: number of days
+#: includes/class-cron.php:149
+#, php-format
+msgid "[%1$s] %2$d content item(s) due for review within %3$d day(s)"
+msgstr ""
+
+#. translators: 1: count, 2: days
+#: includes/class-cron.php:158
+#, php-format
+msgid "The following %1$d item(s) are scheduled for review within the next %2$d day(s):"
+msgstr ""
+
+#. translators: URL
+#: includes/class-cron.php:181
+#, php-format
+msgid "Manage content: %s"
+msgstr ""
+
+#: includes/class-export.php:70
+#: includes/class-export.php:110
+msgid "Unknown report type."
+msgstr ""
+
+#. translators: 1: site name 2: building title
+#: includes/class-feedback.php:105
+#, php-format
+msgid "[%1$s] New observation for %2$s"
+msgstr ""
+
+#: includes/class-feedback.php:112
+msgid "Unknown"
+msgstr ""
+
+#. translators: building title
+#: includes/class-feedback.php:117
+#, php-format
+msgid "A new observation has been submitted for building \"%s\"."
+msgstr ""
+
+#. translators: %s: observation category
+#: includes/class-feedback.php:122
+#, php-format
+msgid "Category : %s"
+msgstr ""
+
+#. translators: %s: observation summary text
+#: includes/class-feedback.php:124
+#, php-format
+msgid "Summary  : %s"
+msgstr ""
+
+#. translators: %s: area key/name
+#: includes/class-feedback.php:129
+#, php-format
+msgid "Area     : %s"
+msgstr ""
+
+#. translators: %s: external reference string
+#: includes/class-feedback.php:134
+#, php-format
+msgid "Ext. ref.: %s"
+msgstr ""
+
+#. translators: %s: submitter's display name
+#: includes/class-feedback.php:138
+#, php-format
+msgid "Submitted by: %s"
+msgstr ""
+
+#. translators: URL
+#: includes/class-feedback.php:142
+#, php-format
+msgid "View reports: %s"
+msgstr ""
+
+#: includes/class-import.php:103
+msgid "Could not open the uploaded file."
+msgstr ""
+
+#: includes/class-import.php:116
+msgid "The CSV file is empty or has no header row."
+msgstr ""
+
+#. translators: 1: required WordPress version 2: current WordPress version
+#: includes/class-install.php:157
+#, php-format
+msgid "OrgaHB Manager requires WordPress %1$s or higher. You are running %2$s."
+msgstr ""
+
+#. translators: 1: required PHP version 2: current PHP version
+#: includes/class-install.php:169
+#, php-format
+msgid "OrgaHB Manager requires PHP %1$s or higher. You are running %2$s."
+msgstr ""
+
+#: includes/class-metaboxes.php:86
+msgid "Building Details"
+msgstr ""
+
+#: includes/class-metaboxes.php:92
+msgid "Areas"
+msgstr ""
+
+#: includes/class-metaboxes.php:98
+msgid "QR Code"
+msgstr ""
+
+#: includes/class-metaboxes.php:104
+msgid "Ownership & Review"
+msgstr ""
+
+#: includes/class-metaboxes.php:113
+msgid "Diagram Asset"
+msgstr ""
+
+#: includes/class-metaboxes.php:119
+msgid "Hotspot JSON"
+msgstr ""
+
+#: includes/class-metaboxes.php:125
+#: includes/class-metaboxes.php:140
+#: includes/class-metaboxes.php:151
+msgid "Content Meta"
+msgstr ""
+
+#: includes/class-metaboxes.php:134
+msgid "Document File"
+msgstr ""
+
+#: includes/class-metaboxes.php:161
+msgid "Workflow"
+msgstr ""
+
+#: includes/class-metaboxes.php:207
+msgid "Select Diagram Image"
+msgstr ""
+
+#: includes/class-metaboxes.php:208
+msgid "Use this image"
+msgstr ""
+
+#: includes/class-metaboxes.php:209
+msgid "Select Document File"
+msgstr ""
+
+#: includes/class-metaboxes.php:210
+msgid "Use this file"
+msgstr ""
+
+#: includes/class-metaboxes.php:211
+#: includes/class-metaboxes.php:521
+msgid "No file selected"
+msgstr ""
+
+#: includes/class-metaboxes.php:280
+msgid "Building Code"
+msgstr ""
+
+#: includes/class-metaboxes.php:285
+msgid "Short internal reference code (optional)."
+msgstr ""
+
+#: includes/class-metaboxes.php:290
+msgid "Address"
+msgstr ""
+
+#: includes/class-metaboxes.php:299
+msgid "Local Contacts"
+msgstr ""
+
+#: includes/class-metaboxes.php:304
+msgid "Names, roles, and contact numbers for this building."
+msgstr ""
+
+#: includes/class-metaboxes.php:309
+msgid "Emergency Notes"
+msgstr ""
+
+#: includes/class-metaboxes.php:314
+msgid "Quick-reference emergency and safety information."
+msgstr ""
+
+#: includes/class-metaboxes.php:318
+#: includes/class-privacy.php:183
+msgid "Status"
+msgstr ""
+
+#: includes/class-metaboxes.php:322
+msgid "Building is active"
+msgstr ""
+
+#: includes/class-metaboxes.php:324
+msgid "Inactive buildings are hidden from field users."
+msgstr ""
+
+#: includes/class-metaboxes.php:341
+msgid "Define the internal areas of this building. The \"General\" area is permanent and cannot be removed."
+msgstr ""
+
+#: includes/class-metaboxes.php:354
+msgid "slug-key"
+msgstr ""
+
+#: includes/class-metaboxes.php:360
+msgid "Label"
+msgstr ""
+
+#: includes/class-metaboxes.php:365
+msgid "Description (optional)"
+msgstr ""
+
+#: includes/class-metaboxes.php:369
+#: includes/class-metaboxes.php:480
+#: includes/class-metaboxes.php:532
+msgid "Remove"
+msgstr ""
+
+#: includes/class-metaboxes.php:377
+msgid "+ Add Area"
+msgstr ""
+
+#: includes/class-metaboxes.php:393
+msgid "The QR token will be generated the first time you save this building."
+msgstr ""
+
+#: includes/class-metaboxes.php:410
+msgid "Download PNG"
+msgstr ""
+
+#: includes/class-metaboxes.php:414
+msgid "Landing URL"
+msgstr ""
+
+#: includes/class-metaboxes.php:419
+msgid "This token is permanent. Printed QR codes remain valid indefinitely."
+msgstr ""
+
+#: includes/class-metaboxes.php:444
+#: includes/class-metaboxes.php:451
+msgid "— select —"
+msgstr ""
+
+#: includes/class-metaboxes.php:445
+msgid "Flowchart"
+msgstr ""
+
+#: includes/class-metaboxes.php:446
+msgid "BPMN-like"
+msgstr ""
+
+#: includes/class-metaboxes.php:447
+msgid "Swimlane"
+msgstr ""
+
+#: includes/class-metaboxes.php:448
+msgid "Check Sequence"
+msgstr ""
+
+#: includes/class-metaboxes.php:455
+msgid "draw.io export"
+msgstr ""
+
+#: includes/class-metaboxes.php:460
+msgid "Diagram Image"
+msgstr ""
+
+#: includes/class-metaboxes.php:473
+msgid "Replace Image"
+msgstr ""
+
+#: includes/class-metaboxes.php:474
+msgid "Upload Image"
+msgstr ""
+
+#: includes/class-metaboxes.php:487
+msgid "Notation"
+msgstr ""
+
+#: includes/class-metaboxes.php:501
+msgid "Source Format"
+msgstr ""
+
+#: includes/class-metaboxes.php:514
+msgid "Source File"
+msgstr ""
+
+#: includes/class-metaboxes.php:526
+msgid "Upload Source File"
+msgstr ""
+
+#: includes/class-metaboxes.php:536
+msgid "Optional: original editable file (e.g. .drawio)."
+msgstr ""
+
+#: includes/class-metaboxes.php:541
+msgid "Field Executable"
+msgstr ""
+
+#: includes/class-metaboxes.php:545
+msgid "Allow field operators to log evidence against hotspots"
+msgstr ""
+
+#: includes/class-metaboxes.php:573
+msgid "JavaScript is required for the visual hotspot editor. With JS disabled you can edit the raw JSON below."
+msgstr ""
+
+#: includes/class-metaboxes.php:606
+msgid "File"
+msgstr ""
+
+#: includes/class-metaboxes.php:620
+msgid "No file attached."
+msgstr ""
+
+#: includes/class-metaboxes.php:627
+msgid "Replace File"
+msgstr ""
+
+#: includes/class-metaboxes.php:628
+msgid "Attach File"
+msgstr ""
+
+#: includes/class-metaboxes.php:630
+msgid "Accepted formats: PDF, DOCX."
+msgstr ""
+
+#: includes/class-metaboxes.php:635
+msgid "Display Mode"
+msgstr ""
+
+#: includes/class-metaboxes.php:640
+msgid "View inline (PDF)"
+msgstr ""
+
+#: includes/class-metaboxes.php:643
+msgid "Open / download (DOCX)"
+msgstr ""
+
+#: includes/class-metaboxes.php:647
+msgid "DOCX files must use \"Open / download\"."
+msgstr ""
+
+#: includes/class-metaboxes.php:700
+#: includes/class-privacy.php:135
+msgid "Version"
+msgstr ""
+
+#: includes/class-metaboxes.php:703
+msgid "e.g. 2.1"
+msgstr ""
+
+#: includes/class-metaboxes.php:706
+msgid "Valid From"
+msgstr ""
+
+#: includes/class-metaboxes.php:711
+msgid "Valid Until"
+msgstr ""
+
+#: includes/class-metaboxes.php:718
+msgid "Next Review"
+msgstr ""
+
+#: includes/class-metaboxes.php:727
+msgid "Requires acknowledgment"
+msgstr ""
+
+#: includes/class-metaboxes.php:735
+msgid "Owner"
+msgstr ""
+
+#: includes/class-metaboxes.php:740
+#: includes/class-metaboxes.php:751
+msgid "— none —"
+msgstr ""
+
+#: includes/class-metaboxes.php:746
+msgid "Deputy"
+msgstr ""
+
+#: includes/class-metaboxes.php:757
+msgid "Owner Label"
+msgstr ""
+
+#: includes/class-metaboxes.php:760
+msgid "Display name when no user is set"
+msgstr ""
+
+#: includes/class-metaboxes.php:763
+msgid "Search Aliases"
+msgstr ""
+
+#: includes/class-metaboxes.php:766
+msgid "comma, separated"
+msgstr ""
+
+#: includes/class-metaboxes.php:772
+msgid "Change Note"
+msgstr ""
+
+#: includes/class-metaboxes.php:775
+msgid "Brief summary of changes in this revision."
+msgstr ""
+
+#: includes/class-metaboxes.php:1033
+msgid "Content submitted for review."
+msgstr ""
+
+#: includes/class-metaboxes.php:1034
+msgid "Content approved and published."
+msgstr ""
+
+#: includes/class-metaboxes.php:1035
+msgid "Content returned for revision."
+msgstr ""
+
+#: includes/class-metaboxes.php:1036
+msgid "Content archived."
+msgstr ""
+
+#: includes/class-metaboxes.php:1037
+msgid "Content restored to draft."
+msgstr ""
+
+#: includes/class-metaboxes.php:1040
+msgid "Workflow action completed."
+msgstr ""
+
+#: includes/class-metaboxes.php:1072
+#: includes/class-metaboxes.php:1073
+msgid "Draft"
+msgstr ""
+
+#: includes/class-metaboxes.php:1074
+msgid "Pending Review"
+msgstr ""
+
+#: includes/class-metaboxes.php:1075
+msgid "Published"
+msgstr ""
+
+#: includes/class-metaboxes.php:1076
+#: includes/class-workflow.php:79
+msgid "Archived"
+msgstr ""
+
+#: includes/class-metaboxes.php:1083
+msgid "Status:"
+msgstr ""
+
+#: includes/class-metaboxes.php:1100
+msgid "Submit for Review"
+msgstr ""
+
+#: includes/class-metaboxes.php:1113
+msgid "Approve"
+msgstr ""
+
+#: includes/class-metaboxes.php:1126
+msgid "Reviewer comment:"
+msgstr ""
+
+#: includes/class-metaboxes.php:1133
+msgid "Required: explain what needs changing"
+msgstr ""
+
+#: includes/class-metaboxes.php:1136
+msgid "Return for Revision"
+msgstr ""
+
+#: includes/class-metaboxes.php:1149
+msgid "Archive reason (optional):"
+msgstr ""
+
+#: includes/class-metaboxes.php:1156
+msgid "e.g. superseded by v2"
+msgstr ""
+
+#: includes/class-metaboxes.php:1159
+msgid "Archive"
+msgstr ""
+
+#: includes/class-metaboxes.php:1172
+msgid "Restore to Draft"
+msgstr ""
+
+#: includes/class-metaboxes.php:1194
+msgid "Unauthorized."
+msgstr ""
+
+#: includes/class-metaboxes.php:1202
+msgid "Invalid request."
+msgstr ""
+
+#: includes/class-metaboxes.php:1206
+msgid "Security check failed."
+msgstr ""
+
+#: includes/class-metaboxes.php:1217
+msgid "Unknown workflow action."
+msgstr ""
+
+#: includes/class-privacy.php:50
+#: includes/class-privacy.php:61
+#: includes/class-privacy.php:100
+#: includes/class-privacy.php:202
+msgid "Handbook Manager"
+msgstr ""
+
+#: includes/class-privacy.php:51
+msgid "This site uses the OrgaHB Manager plugin to run a building-specific organizational handbook. The following personal data may be collected and stored:"
+msgstr ""
+
+#: includes/class-privacy.php:53
+msgid "<strong>Acknowledgments</strong>: your user ID and display name are recorded when you acknowledge a handbook page or controlled document, along with the revision and timestamp."
+msgstr ""
+
+#: includes/class-privacy.php:54
+msgid "<strong>Process step evidence</strong>: your user ID and display name are recorded when you log an outcome against a process diagram hotspot, along with the building, step, outcome, optional note, and timestamp."
+msgstr ""
+
+#: includes/class-privacy.php:55
+msgid "<strong>Observations</strong>: your user ID and display name are recorded as the author of any building observation you create."
+msgstr ""
+
+#: includes/class-privacy.php:56
+msgid "<strong>Audit log</strong>: content workflow events (submit for review, approve, archive, etc.) record the acting user's ID and display name."
+msgstr ""
+
+#: includes/class-privacy.php:58
+msgid "This data is used solely for internal operational records, traceability, and governance. It is not shared with third parties. If your account is deleted, your user ID is nullified in all records and replaced with your display name marked as deleted, preserving the audit trail without retaining an active identity reference."
+msgstr ""
+
+#: includes/class-privacy.php:131
+msgid "Handbook Acknowledgments"
+msgstr ""
+
+#: includes/class-privacy.php:134
+msgid "Content ID"
+msgstr ""
+
+#: includes/class-privacy.php:136
+msgid "Acknowledged at"
+msgstr ""
+
+#: includes/class-privacy.php:137
+msgid "Source"
+msgstr ""
+
+#: includes/class-privacy.php:153
+msgid "Handbook Process Executions"
+msgstr ""
+
+#: includes/class-privacy.php:156
+msgid "Process ID"
+msgstr ""
+
+#: includes/class-privacy.php:157
+#: includes/class-privacy.php:180
+msgid "Building ID"
+msgstr ""
+
+#: includes/class-privacy.php:158
+msgid "Hotspot"
+msgstr ""
+
+#: includes/class-privacy.php:159
+msgid "Outcome"
+msgstr ""
+
+#: includes/class-privacy.php:160
+msgid "Note"
+msgstr ""
+
+#: includes/class-privacy.php:161
+msgid "Executed at"
+msgstr ""
+
+#: includes/class-privacy.php:177
+msgid "Handbook Observations"
+msgstr ""
+
+#: includes/class-privacy.php:181
+msgid "Category"
+msgstr ""
+
+#: includes/class-privacy.php:182
+msgid "Summary"
+msgstr ""
+
+#: includes/class-privacy.php:184
+msgid "Created at"
+msgstr ""
+
+#: includes/class-rest-api.php:280
+msgid "No building found for this QR token."
+msgstr ""
+
+#: includes/class-rest-api.php:285
+#: includes/class-rest-api.php:304
+#: includes/class-rest-api.php:475
+#: includes/class-rest-api.php:571
+#: includes/class-rest-api.php:600
+msgid "Building not found."
+msgstr ""
+
+#: includes/class-rest-api.php:410
+msgid "Invalid post. Only handbook pages and documents can be acknowledged."
+msgstr ""
+
+#: includes/class-rest-api.php:413
+msgid "Only published content can be acknowledged."
+msgstr ""
+
+#: includes/class-rest-api.php:425
+msgid "Failed to record acknowledgment."
+msgstr ""
+
+#. translators: %s: comma-separated valid outcomes
+#: includes/class-rest-api.php:456
+#, php-format
+msgid "Invalid outcome. Allowed values: %s."
+msgstr ""
+
+#: includes/class-rest-api.php:469
+msgid "Process not found or not published."
+msgstr ""
+
+#: includes/class-rest-api.php:478
+#: includes/class-rest-api.php:603
+msgid "This building is not active."
+msgstr ""
+
+#: includes/class-rest-api.php:489
+msgid "This process is not linked to the specified building."
+msgstr ""
+
+#: includes/class-rest-api.php:522
+msgid "Failed to record execution."
+msgstr ""
+
+#: includes/class-rest-api.php:608
+msgid "summary is required."
+msgstr ""
+
+#: includes/class-rest-api.php:636
+msgid "Failed to create observation."
+msgstr ""
+
+#: includes/class-rest-api.php:667
+msgid "Observation not found or status update failed."
+msgstr ""
+
+#. translators: %s: comma-separated valid content types
+#: includes/class-rest-api.php:710
+#, php-format
+msgid "Invalid content_type. Allowed: %s."
+msgstr ""
+
+#: includes/class-rest-api.php:718
+msgid "Content item not found or wrong type."
+msgstr ""
+
+#: includes/class-rest-api.php:735
+msgid "Failed to add building link."
+msgstr ""
+
+#: includes/class-rest-api.php:759
+#: includes/class-rest-api.php:775
+msgid "Building link not found."
+msgstr ""
+
+#: includes/class-rest-api.php:798
+msgid "\"areas\" must be an array."
+msgstr ""
+
+#: includes/class-rest-api.php:945
+msgid "This hotspot is a navigation link and cannot log evidence."
+msgstr ""
+
+#: includes/class-rest-api.php:1012
+msgid "You are not allowed to perform this action."
+msgstr ""
+
+#: includes/class-svg.php:98
+msgid "SVG upload rejected: the server-side sanitizer library is not installed (run composer install)."
+msgstr ""
+
+#: includes/class-svg.php:104
+msgid "SVG upload rejected: sanitizer class not found."
+msgstr ""
+
+#: includes/class-svg.php:111
+msgid "SVG upload rejected: could not read the uploaded file."
+msgstr ""
+
+#: includes/class-svg.php:117
+msgid "SVG upload rejected: the file could not be sanitized."
+msgstr ""
+
+#: includes/class-taxonomy.php:40
+#: includes/class-taxonomy.php:49
+msgid "Sections"
+msgstr ""
+
+#: includes/class-taxonomy.php:41
+msgid "Section"
+msgstr ""
+
+#: includes/class-taxonomy.php:42
+msgid "Add New Section"
+msgstr ""
+
+#: includes/class-taxonomy.php:43
+msgid "Edit Section"
+msgstr ""
+
+#: includes/class-taxonomy.php:44
+msgid "New Section Name"
+msgstr ""
+
+#: includes/class-taxonomy.php:45
+msgid "Parent Section"
+msgstr ""
+
+#: includes/class-taxonomy.php:46
+msgid "Parent Section:"
+msgstr ""
+
+#: includes/class-taxonomy.php:47
+msgid "Search Sections"
+msgstr ""
+
+#: includes/class-taxonomy.php:48
+msgid "All Sections"
+msgstr ""
+
+#: includes/class-workflow.php:59
+msgctxt "post status"
+msgid "Archived"
+msgstr ""
+
+#. translators: %s: number of archived items
+#: includes/class-workflow.php:65
+#, php-format
+msgid "Archived (%s)"
+msgid_plural "Archived (%s)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-workflow.php:104
+msgid "Only draft content can be submitted for review."
+msgstr ""
+
+#: includes/class-workflow.php:109
+msgid "You do not have permission to submit content for review."
+msgstr ""
+
+#: includes/class-workflow.php:147
+msgid "Only content pending review can be approved."
+msgstr ""
+
+#: includes/class-workflow.php:152
+msgid "You do not have permission to approve content."
+msgstr ""
+
+#: includes/class-workflow.php:186
+msgid "A reviewer comment is required when returning content for revision."
+msgstr ""
+
+#: includes/class-workflow.php:200
+msgid "Only content pending review can be returned for revision."
+msgstr ""
+
+#: includes/class-workflow.php:205
+msgid "You do not have permission to return content for revision."
+msgstr ""
+
+#: includes/class-workflow.php:241
+msgid "This content is already archived."
+msgstr ""
+
+#: includes/class-workflow.php:245
+msgid "You do not have permission to archive content."
+msgstr ""
+
+#: includes/class-workflow.php:286
+msgid "Only archived content can be restored."
+msgstr ""
+
+#: includes/class-workflow.php:290
+msgid "You do not have permission to restore content."
+msgstr ""
+
+#: includes/class-workflow.php:321
+msgid "Post not found."
+msgstr ""
+
+#: includes/class-workflow.php:327
+msgid "Workflow transitions are not applicable to this content type."
+msgstr ""
+
+#: templates/building-view.php:53
+msgid "You do not have permission to view this building handbook."
+msgstr ""
+
+#: templates/building-view.php:54
+msgid "Access Denied"
+msgstr ""
+
+#: templates/building-view.php:136
+msgid "JavaScript is required to view the building handbook."
+msgstr ""

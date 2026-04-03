@@ -1,0 +1,206 @@
+/**
+ * OrgaHB Process Hotspot Editor — admin styles.
+ */
+
+/* ── Outer wrapper ──────────────────────────────────────────────────────────── */
+
+.orgahb-pe {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.orgahb-pe-no-image {
+	padding: 16px;
+	color: #646970;
+	font-style: italic;
+}
+
+/* ── Toolbar ────────────────────────────────────────────────────────────────── */
+
+.orgahb-pe-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 6px 0;
+	border-bottom: 1px solid #dcdcde;
+	font-size: 13px;
+}
+
+.orgahb-pe-hint {
+	color: #646970;
+}
+
+.orgahb-pe-count {
+	font-weight: 600;
+	color: #3c434a;
+}
+
+/* ── Stage: image + hotspot overlay ────────────────────────────────────────── */
+
+.orgahb-pe-stage {
+	overflow: auto;
+	max-height: 600px;
+	border: 1px solid #dcdcde;
+	border-radius: 3px;
+	background: #f0f0f1;
+}
+
+.orgahb-pe-image-wrap {
+	position: relative;
+	display: inline-block;
+	min-width: 100%;
+	cursor: crosshair;
+}
+
+.orgahb-pe-image {
+	display: block;
+	max-width: 100%;
+	height: auto;
+	user-select: none;
+	pointer-events: none;
+}
+
+/* ── Hotspot overlays ───────────────────────────────────────────────────────── */
+
+.orgahb-pe-hotspot {
+	position: absolute;
+	box-sizing: border-box;
+	border: 2px solid rgba(34, 113, 177, 0.7);
+	background: rgba(34, 113, 177, 0.15);
+	cursor: move;
+	touch-action: none;
+	border-radius: 2px;
+	overflow: hidden;
+	transition: background 0.1s;
+}
+
+.orgahb-pe-hotspot:hover {
+	background: rgba(34, 113, 177, 0.3);
+}
+
+.orgahb-pe-hotspot.is-step {
+	border-color: rgba(30, 140, 63, 0.8);
+	background: rgba(30, 140, 63, 0.15);
+}
+
+.orgahb-pe-hotspot.is-step:hover {
+	background: rgba(30, 140, 63, 0.3);
+}
+
+.orgahb-pe-hotspot.is-selected {
+	border-width: 2px;
+	border-style: solid;
+	box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2271b1;
+	z-index: 10;
+}
+
+.orgahb-pe-hotspot.is-selected.is-step {
+	box-shadow: 0 0 0 2px #fff, 0 0 0 4px #1e8c3f;
+}
+
+.orgahb-pe-hotspot.needs-review {
+	border-color: #d63638;
+	background: rgba(214, 54, 56, 0.15);
+}
+
+.orgahb-pe-hs-label {
+	display: block;
+	padding: 2px 4px;
+	font-size: 11px;
+	font-weight: 600;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	background: rgba(0, 0, 0, 0.45);
+	color: #fff;
+	line-height: 1.4;
+	pointer-events: none;
+}
+
+/* ── Resize handle ──────────────────────────────────────────────────────────── */
+
+.orgahb-pe-resize-handle {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	width: 12px;
+	height: 12px;
+	background: linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.5) 50%);
+	cursor: se-resize;
+}
+
+/* ── Edit panel ─────────────────────────────────────────────────────────────── */
+
+.orgahb-pe-panel {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 3px;
+	padding: 0;
+}
+
+.orgahb-pe-panel-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px 14px;
+	border-bottom: 1px solid #dcdcde;
+	background: #f6f7f7;
+}
+
+.orgahb-pe-panel-header strong {
+	font-size: 13px;
+}
+
+.orgahb-pe-panel-close {
+	background: none;
+	border: none;
+	font-size: 18px;
+	line-height: 1;
+	color: #646970;
+	cursor: pointer;
+	padding: 2px 6px;
+}
+
+.orgahb-pe-panel-table {
+	margin: 0;
+	padding: 8px 14px;
+}
+
+.orgahb-pe-panel-table th {
+	width: 120px;
+	padding-top: 10px;
+	vertical-align: top;
+	font-size: 12px;
+}
+
+.orgahb-pe-panel-table td {
+	padding-top: 8px;
+}
+
+.orgahb-pe-coords {
+	display: flex;
+	gap: 12px;
+	font-size: 12px;
+	color: #646970;
+	font-family: Consolas, Monaco, monospace;
+}
+
+.orgahb-pe-panel-actions {
+	padding: 10px 14px;
+	border-top: 1px solid #dcdcde;
+}
+
+/* ── Review warning ─────────────────────────────────────────────────────────── */
+
+.orgahb-pe-review-warning {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 14px;
+	background: #fcf0f1;
+	border: 1px solid #d63638;
+	border-radius: 3px;
+	font-size: 13px;
+	color: #d63638;
+}

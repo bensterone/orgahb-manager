@@ -1,0 +1,822 @@
+/**
+ * OrgaHB Handbook Viewer — field-facing styles.
+ *
+ * Mobile-first. All layout uses relative units so the sheet works well in a
+ * phone browser after a QR scan.
+ */
+
+/* ── Page shell ─────────────────────────────────────────────────────────────── */
+
+.orgahb-hv-page {
+	padding: 0;
+	margin: 0;
+}
+
+.orgahb-hv {
+	max-width: 720px;
+	margin: 0 auto;
+	padding: 0 0 40px;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	font-size: 15px;
+	color: #1d2327;
+}
+
+/* ── Loading / error states ─────────────────────────────────────────────────── */
+
+.orgahb-hv-loading,
+.orgahb-hv-error,
+.orgahb-hv-empty {
+	padding: 24px 16px;
+	text-align: center;
+	color: #646970;
+}
+
+.orgahb-hv-error {
+	color: #d63638;
+}
+
+/* ── Building header ────────────────────────────────────────────────────────── */
+
+.orgahb-hv-header {
+	padding: 20px 16px 12px;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.orgahb-hv-title {
+	margin: 0 0 6px;
+	font-size: 22px;
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+.orgahb-hv-subtitle {
+	margin: 0 0 6px;
+	color: #646970;
+	font-size: 13px;
+}
+
+.orgahb-hv-code {
+	font-weight: 600;
+	margin-right: 8px;
+}
+
+.orgahb-hv-emergency {
+	margin-top: 8px;
+	padding: 8px 12px;
+	background: #fff3cd;
+	border-left: 4px solid #f0b849;
+	border-radius: 2px;
+	font-size: 13px;
+}
+
+.orgahb-hv-contacts {
+	margin-top: 8px;
+	font-size: 13px;
+}
+
+.orgahb-hv-contacts summary {
+	cursor: pointer;
+	color: #2271b1;
+}
+
+.orgahb-hv-contacts pre {
+	margin: 6px 0 0;
+	white-space: pre-wrap;
+	font-family: inherit;
+}
+
+/* ── Search bar ─────────────────────────────────────────────────────────────── */
+
+.orgahb-hv-search {
+	position: relative;
+	padding: 10px 16px;
+	border-bottom: 1px solid #dcdcde;
+	background: #fff;
+}
+
+.orgahb-hv-search-input {
+	width: 100%;
+	padding: 9px 36px 9px 12px;
+	border: 1px solid #c3c4c7;
+	border-radius: 20px;
+	font-size: 14px;
+	font-family: inherit;
+	background: #f6f7f7;
+	box-sizing: border-box;
+	transition: border-color 0.15s, background 0.15s;
+}
+
+.orgahb-hv-search-input:focus {
+	outline: none;
+	border-color: #2271b1;
+	background: #fff;
+}
+
+.orgahb-hv-search-clear {
+	position: absolute;
+	right: 26px;
+	top: 50%;
+	transform: translateY(-50%);
+	background: none;
+	border: none;
+	font-size: 18px;
+	line-height: 1;
+	color: #646970;
+	cursor: pointer;
+	padding: 4px;
+}
+
+.orgahb-hv-search-empty,
+.orgahb-hv-search-count {
+	padding: 12px 16px;
+	font-size: 13px;
+	color: #646970;
+	margin: 0;
+}
+
+.orgahb-hv-search-count {
+	color: #3c434a;
+}
+
+/* ── Area tabs ──────────────────────────────────────────────────────────────── */
+
+.orgahb-hv-areas {
+	display: flex;
+	overflow-x: auto;
+	gap: 4px;
+	padding: 8px 16px;
+	border-bottom: 1px solid #dcdcde;
+	background: #f6f7f7;
+	-webkit-overflow-scrolling: touch;
+	scrollbar-width: none;
+}
+
+.orgahb-hv-areas::-webkit-scrollbar {
+	display: none;
+}
+
+.orgahb-hv-area-tab {
+	flex-shrink: 0;
+	padding: 6px 14px;
+	background: transparent;
+	border: 1px solid #c3c4c7;
+	border-radius: 20px;
+	font-size: 13px;
+	cursor: pointer;
+	color: #3c434a;
+	white-space: nowrap;
+	transition: background 0.1s, color 0.1s;
+}
+
+.orgahb-hv-area-tab.is-active,
+.orgahb-hv-area-tab:hover {
+	background: #2271b1;
+	border-color: #2271b1;
+	color: #fff;
+}
+
+/* ── Content list ───────────────────────────────────────────────────────────── */
+
+.orgahb-hv-items {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.orgahb-hv-item {
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.orgahb-hv-item.is-featured {
+	background: #f0f6fc;
+}
+
+.orgahb-hv-item-btn {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	width: 100%;
+	padding: 14px 16px;
+	background: none;
+	border: none;
+	text-align: left;
+	cursor: pointer;
+	font-size: 15px;
+	color: inherit;
+}
+
+.orgahb-hv-item-btn:hover {
+	background: #f6f7f7;
+}
+
+.orgahb-hv-item-icon {
+	font-size: 18px;
+	flex-shrink: 0;
+}
+
+.orgahb-hv-item-title {
+	flex: 1;
+	font-weight: 500;
+}
+
+.orgahb-hv-featured-badge {
+	flex-shrink: 0;
+	padding: 2px 7px;
+	background: #2271b1;
+	color: #fff;
+	border-radius: 10px;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+}
+
+.orgahb-hv-ack-badge {
+	flex-shrink: 0;
+	color: #1e8c3f;
+	font-weight: 700;
+	font-size: 14px;
+}
+
+.orgahb-hv-overdue-badge {
+	flex-shrink: 0;
+	color: #d63638;
+	font-size: 14px;
+}
+
+.orgahb-hv-item.is-overdue {
+	border-left: 3px solid #d63638;
+}
+
+.orgahb-hv-interval,
+.orgahb-hv-note {
+	margin: 0 0 10px;
+	padding: 0 16px 0 48px;
+	font-size: 12px;
+	color: #646970;
+}
+
+/* ── Content modal ──────────────────────────────────────────────────────────── */
+
+.orgahb-hv-modal-backdrop {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.55);
+	z-index: 9000;
+	display: flex;
+	align-items: flex-end;
+}
+
+@media (min-width: 600px) {
+	.orgahb-hv-modal-backdrop {
+		align-items: center;
+		justify-content: center;
+	}
+}
+
+.orgahb-hv-modal {
+	background: #fff;
+	width: 100%;
+	max-width: 680px;
+	max-height: 90vh;
+	border-radius: 12px 12px 0 0;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+@media (min-width: 600px) {
+	.orgahb-hv-modal {
+		border-radius: 8px;
+	}
+}
+
+.orgahb-hv-modal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 16px 20px;
+	border-bottom: 1px solid #dcdcde;
+	flex-shrink: 0;
+}
+
+.orgahb-hv-modal-header h2 {
+	margin: 0;
+	font-size: 17px;
+}
+
+.orgahb-hv-modal-close {
+	padding: 4px 8px;
+	background: none;
+	border: none;
+	font-size: 20px;
+	cursor: pointer;
+	color: #646970;
+	line-height: 1;
+}
+
+.orgahb-hv-modal-body {
+	flex: 1;
+	overflow-y: auto;
+	padding: 20px;
+	-webkit-overflow-scrolling: touch;
+}
+
+/* ── Page viewer ────────────────────────────────────────────────────────────── */
+
+.orgahb-hv-version {
+	margin: 0 0 12px;
+	font-size: 12px;
+	color: #646970;
+}
+
+.orgahb-hv-page-content {
+	line-height: 1.7;
+}
+
+.orgahb-hv-page-content h2,
+.orgahb-hv-page-content h3 {
+	margin-top: 1.4em;
+}
+
+.orgahb-hv-ack-bar {
+	margin-top: 24px;
+	padding-top: 16px;
+	border-top: 1px solid #dcdcde;
+	text-align: center;
+}
+
+.orgahb-hv-ack-error {
+	color: #d63638;
+	margin: 0 0 8px;
+	font-size: 13px;
+}
+
+.orgahb-hv-ack-btn {
+	padding: 10px 28px;
+	background: #1e8c3f;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	font-size: 15px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.orgahb-hv-ack-btn:disabled {
+	opacity: 0.6;
+	cursor: default;
+}
+
+.orgahb-hv-acked {
+	margin-top: 16px;
+	text-align: center;
+	color: #1e8c3f;
+	font-weight: 600;
+}
+
+/* ── Document viewer ────────────────────────────────────────────────────────── */
+
+/* PDF.js canvas-rendered pages container */
+.orgahb-hv-pdf-canvas-wrap {
+	width: 100%;
+	overflow-y: auto;
+	max-height: 70vh;
+	border: 1px solid #dcdcde;
+	border-radius: 3px;
+	background: #525659;
+	padding: 8px 0;
+}
+
+.orgahb-hv-pdf-loading {
+	text-align: center;
+	color: #646970;
+	padding: 20px 0;
+}
+
+.orgahb-hv-doc-download {
+	margin-top: 12px;
+	text-align: center;
+}
+
+.orgahb-hv-doc-link {
+	display: inline-block;
+	padding: 10px 24px;
+	background: #2271b1;
+	color: #fff;
+	border-radius: 4px;
+	text-decoration: none;
+	font-weight: 600;
+}
+
+.orgahb-hv-doc-missing {
+	color: #646970;
+}
+
+/* ── Process viewer ─────────────────────────────────────────────────────────── */
+
+/* Outer scroll container — Panzoom's "contain: outside" works within this. */
+.orgahb-hv-process-outer {
+	overflow: hidden;
+	width: 100%;
+	cursor: grab;
+	touch-action: none; /* Panzoom owns all touch gestures inside */
+	border: 1px solid #e0e0e0;
+	border-radius: 4px;
+	background: #fafafa;
+}
+
+.orgahb-hv-process-outer:active {
+	cursor: grabbing;
+}
+
+/* The element Panzoom transforms — contains image + hotspot layer. */
+.orgahb-hv-process-diagram-wrap {
+	position: relative;
+	display: inline-block;
+	/* Do not set max-width here; Panzoom controls the transform. */
+	transform-origin: 0 0;
+}
+
+.orgahb-hv-process-image {
+	display: block;
+	max-width: 100%;
+	height: auto;
+	user-select: none;
+	pointer-events: none; /* Panzoom handles pointer events on the wrap */
+}
+
+/* Inline SVG container — make the SVG inside fill the available width */
+.orgahb-hv-process-svg svg {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+/* Reset zoom button */
+.orgahb-hv-panzoom-controls {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: 4px;
+}
+
+.orgahb-hv-panzoom-reset {
+	font-size: 12px;
+	padding: 3px 8px;
+	background: none;
+	border: 1px solid #c3c4c7;
+	border-radius: 3px;
+	cursor: pointer;
+	color: #3c434a;
+}
+
+.orgahb-hv-panzoom-reset:hover {
+	background: #f0f0f1;
+}
+
+.orgahb-hv-hotspot-layer {
+	position: absolute;
+	inset: 0;
+}
+
+.orgahb-hv-hotspot {
+	position: absolute;
+	background: rgba(34, 113, 177, 0.2);
+	border: 2px solid rgba(34, 113, 177, 0.6);
+	border-radius: 3px;
+	cursor: pointer;
+	transition: background 0.15s;
+}
+
+.orgahb-hv-hotspot:hover,
+.orgahb-hv-hotspot:focus {
+	background: rgba(34, 113, 177, 0.4);
+}
+
+.orgahb-hv-hotspot.is-step {
+	border-color: rgba(30, 140, 63, 0.7);
+	background: rgba(30, 140, 63, 0.15);
+}
+
+.orgahb-hv-hotspot.is-step:hover {
+	background: rgba(30, 140, 63, 0.35);
+}
+
+.orgahb-hv-no-image {
+	color: #646970;
+}
+
+/* ── Hotspot bottom sheet ───────────────────────────────────────────────────── */
+
+.orgahb-hv-sheet-backdrop {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.45);
+	z-index: 9100;
+	display: flex;
+	align-items: flex-end;
+}
+
+.orgahb-hv-sheet {
+	background: #fff;
+	width: 100%;
+	max-height: 80vh;
+	border-radius: 12px 12px 0 0;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.orgahb-hv-sheet-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 14px 16px;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.orgahb-hv-sheet-header h3 {
+	margin: 0;
+	font-size: 16px;
+}
+
+.orgahb-hv-sheet-close {
+	padding: 4px 8px;
+	background: none;
+	border: none;
+	font-size: 20px;
+	cursor: pointer;
+	color: #646970;
+}
+
+.orgahb-hv-sheet-body {
+	flex: 1;
+	overflow-y: auto;
+	padding: 16px;
+}
+
+/* ── Execution (evidence logging) form ──────────────────────────────────────── */
+
+.orgahb-hv-exec-form {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.orgahb-hv-exec-label {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	font-size: 13px;
+	font-weight: 600;
+	color: #3c434a;
+}
+
+.orgahb-hv-exec-label select,
+.orgahb-hv-exec-label textarea {
+	font-size: 14px;
+	padding: 7px 10px;
+	border: 1px solid #c3c4c7;
+	border-radius: 3px;
+	font-family: inherit;
+}
+
+.orgahb-hv-exec-btn {
+	padding: 11px 20px;
+	background: #1e8c3f;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	font-size: 15px;
+	font-weight: 600;
+	cursor: pointer;
+	align-self: flex-start;
+}
+
+.orgahb-hv-exec-btn:disabled {
+	opacity: 0.6;
+	cursor: default;
+}
+
+.orgahb-hv-done {
+	color: #1e8c3f;
+	font-weight: 600;
+	text-align: center;
+	padding: 12px 0;
+}
+
+.orgahb-hv-hotspot-info {
+	color: #646970;
+	font-size: 13px;
+}
+
+.orgahb-hv-hotspot-link {
+	color: #2271b1;
+	text-decoration: underline;
+	word-break: break-all;
+}
+
+.orgahb-hv-hotspot-navigate {
+	display: block;
+	width: 100%;
+	padding: 10px 14px;
+	background: #2271b1;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+	text-align: left;
+}
+
+.orgahb-hv-hotspot-navigate:hover {
+	background: #135e96;
+}
+
+.orgahb-hv-hotspot-list {
+	margin-top: 12px;
+	font-size: 14px;
+}
+
+.orgahb-hv-hotspot-list summary {
+	cursor: pointer;
+	color: #646970;
+	font-size: 13px;
+	padding: 4px 0;
+}
+
+.orgahb-hv-hotspot-list ul {
+	margin: 8px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.orgahb-hv-hotspot-list li {
+	padding: 6px 0;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.orgahb-hv-hotspot-list-btn {
+	background: none;
+	border: none;
+	padding: 0;
+	color: #2271b1;
+	cursor: pointer;
+	font-size: 14px;
+	text-decoration: underline;
+	text-align: left;
+}
+
+.orgahb-hv-hotspot-list-desc {
+	color: #646970;
+	font-size: 13px;
+}
+
+/* ── Observations ───────────────────────────────────────────────────────────── */
+
+.orgahb-hv-observations {
+	margin-top: 24px;
+	padding: 0 16px;
+}
+
+.orgahb-hv-obs-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 10px;
+}
+
+.orgahb-hv-obs-header h2 {
+	margin: 0;
+	font-size: 17px;
+}
+
+.orgahb-hv-obs-add-btn {
+	padding: 6px 14px;
+	background: #2271b1;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.orgahb-hv-obs-empty {
+	color: #646970;
+	font-size: 13px;
+	margin: 0;
+}
+
+.orgahb-hv-obs-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.orgahb-hv-obs-item {
+	padding: 10px 0;
+	border-bottom: 1px solid #f0f0f1;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+	font-size: 14px;
+}
+
+.orgahb-hv-obs-summary {
+	flex: 1;
+}
+
+.orgahb-hv-obs-area {
+	color: #646970;
+	font-size: 12px;
+}
+
+.orgahb-hv-obs-status {
+	padding: 2px 8px;
+	border-radius: 10px;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	background: #f0f0f1;
+	color: #3c434a;
+}
+
+.orgahb-hv-obs-open .orgahb-hv-obs-status,
+.orgahb-hv-obs-in_progress .orgahb-hv-obs-status {
+	background: #fff3cd;
+	color: #7a4e00;
+}
+
+/* ── Add observation form ───────────────────────────────────────────────────── */
+
+.orgahb-hv-obs-form {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 12px;
+	background: #f6f7f7;
+	border-radius: 4px;
+	margin-bottom: 14px;
+}
+
+.orgahb-hv-obs-label {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	font-size: 13px;
+	font-weight: 600;
+	color: #3c434a;
+}
+
+.orgahb-hv-obs-label input {
+	font-size: 14px;
+	padding: 7px 10px;
+	border: 1px solid #c3c4c7;
+	border-radius: 3px;
+	font-family: inherit;
+}
+
+.orgahb-hv-obs-form-actions {
+	display: flex;
+	gap: 8px;
+}
+
+.orgahb-hv-obs-form-actions button[type="submit"] {
+	padding: 8px 16px;
+	background: #2271b1;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.orgahb-hv-obs-form-actions button[type="submit"]:disabled {
+	opacity: 0.6;
+	cursor: default;
+}
+
+.orgahb-hv-obs-form-actions button[type="button"] {
+	padding: 8px 16px;
+	background: none;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	font-size: 14px;
+	cursor: pointer;
+	color: #3c434a;
+}
+
+/* ── No-JS notice ───────────────────────────────────────────────────────────── */
+
+.orgahb-hv-nojs-notice {
+	max-width: 480px;
+	margin: 40px auto;
+	padding: 20px;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	text-align: center;
+}

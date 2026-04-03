@@ -1,0 +1,21 @@
+{
+    "name": "your-org/orgahb-manager",
+    "description": "Building-specific organizational handbook WordPress plugin.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=8.1",
+        "rhukster/dom-sanitizer": "^1.0"
+    },
+    "require-dev": {},
+    "autoload": {
+        "classmap": [
+            "includes/",
+            "admin/"
+        ]
+    },
+    "config": {
+        "vendor-dir": "vendor",
+        "optimize-autoloader": true
+    }
+}

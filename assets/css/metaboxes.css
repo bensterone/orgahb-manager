@@ -1,0 +1,157 @@
+/**
+ * OrgaHB Metabox admin styles.
+ */
+
+/* ── General meta table ────────────────────────────────────────────────────── */
+
+.orgahb-meta-table th {
+	width: 160px;
+	padding-top: 12px;
+	vertical-align: top;
+}
+
+/* ── Sidebar meta panel ─────────────────────────────────────────────────────── */
+
+.orgahb-sidebar-meta p {
+	margin-bottom: 10px;
+}
+
+.orgahb-sidebar-meta hr {
+	margin: 12px 0;
+	border: none;
+	border-top: 1px solid #dcdcde;
+}
+
+.orgahb-sidebar-meta label strong {
+	display: inline-block;
+	margin-bottom: 2px;
+}
+
+/* ── QR token display ───────────────────────────────────────────────────────── */
+
+.orgahb-qr-token {
+	display: block;
+	word-break: break-all;
+	font-size: 11px;
+	background: #f6f7f7;
+	border: 1px solid #dcdcde;
+	border-radius: 3px;
+	padding: 4px 6px;
+	margin-top: 2px;
+}
+
+/* ── Building areas list ────────────────────────────────────────────────────── */
+
+#orgahb-areas-list {
+	margin-bottom: 8px;
+}
+
+.orgahb-area-row {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin-bottom: 6px;
+}
+
+.orgahb-area-row .orgahb-area-key {
+	width: 120px;
+	flex-shrink: 0;
+}
+
+.orgahb-area-row .orgahb-area-label {
+	width: 140px;
+	flex-shrink: 0;
+}
+
+.orgahb-area-row .orgahb-area-description {
+	flex: 1;
+	min-width: 0;
+}
+
+/* ── Process image preview ──────────────────────────────────────────────────── */
+
+.orgahb-image-preview {
+	margin-bottom: 6px;
+	min-height: 0;
+}
+
+.orgahb-image-preview img {
+	display: block;
+	max-width: 300px;
+	height: auto;
+	border: 1px solid #dcdcde;
+	border-radius: 3px;
+	margin-bottom: 4px;
+}
+
+/* ── File meta tags ─────────────────────────────────────────────────────────── */
+
+.orgahb-file-info {
+	margin-bottom: 6px;
+}
+
+.orgahb-file-meta {
+	display: inline-block;
+	margin-left: 6px;
+	color: #646970;
+	font-size: 12px;
+}
+
+.orgahb-file-name {
+	display: inline-block;
+	margin-right: 8px;
+	color: #3c434a;
+}
+
+/* ── Monospace textarea (hotspot JSON) ──────────────────────────────────────── */
+
+.orgahb-mono {
+	font-family: Consolas, Monaco, "Courier New", monospace;
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+/* ── Workflow metabox ────────────────────────────────────────────────────────── */
+
+.orgahb-workflow-status {
+	margin: 0 0 10px;
+}
+
+.orgahb-workflow-reason {
+	margin: 0 0 8px;
+	color: #646970;
+	font-size: 12px;
+}
+
+#orgahb-workflow form {
+	margin-top: 8px;
+}
+
+.orgahb-wf-label {
+	display: block;
+	font-size: 12px;
+	margin-bottom: 3px;
+}
+
+.orgahb-wf-comment,
+.orgahb-wf-reason {
+	margin-bottom: 5px;
+	font-size: 12px;
+}
+
+.orgahb-wf-btn {
+	display: block;
+	width: 100%;
+	margin-top: 4px;
+	text-align: center;
+}
+
+.orgahb-wf-archive-btn {
+	color: #d63638 !important;
+	border-color: #d63638 !important;
+}
+
+.orgahb-wf-archive-btn:hover {
+	background: #d63638 !important;
+	color: #fff !important;
+}

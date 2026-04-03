@@ -1,0 +1,129 @@
+/**
+ * OrgaHB admin page styles.
+ * Applied to plugin-owned admin pages only (reports, backup/export, dashboard).
+ */
+
+/* ── Reports: tab strip ─────────────────────────────────────────────────────── */
+
+.orgahb-report-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 2px;
+	margin: 16px 0 0;
+	border-bottom: 1px solid #c3c4c7;
+}
+
+.orgahb-report-tab {
+	display: inline-block;
+	padding: 7px 14px;
+	font-size: 13px;
+	text-decoration: none;
+	color: #3c434a;
+	border: 1px solid transparent;
+	border-bottom: none;
+	border-radius: 3px 3px 0 0;
+	margin-bottom: -1px;
+	background: #f6f7f7;
+}
+
+.orgahb-report-tab:hover {
+	background: #fff;
+	border-color: #c3c4c7;
+	color: #1d2327;
+}
+
+.orgahb-report-tab.is-active {
+	background: #fff;
+	border-color: #c3c4c7;
+	color: #1d2327;
+	font-weight: 600;
+}
+
+/* ── Reports: filter row ────────────────────────────────────────────────────── */
+
+.orgahb-report-filters {
+	margin: 16px 0 12px;
+}
+
+.orgahb-filter-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 12px;
+}
+
+.orgahb-filter-row label {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	font-size: 13px;
+	font-weight: 600;
+	color: #3c434a;
+}
+
+.orgahb-filter-row select,
+.orgahb-filter-row input[type="date"] {
+	font-size: 13px;
+	padding: 5px 8px;
+	border: 1px solid #c3c4c7;
+	border-radius: 3px;
+	font-family: inherit;
+	min-width: 160px;
+}
+
+/* ── Reports: action bar ────────────────────────────────────────────────────── */
+
+.orgahb-report-actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 12px;
+}
+
+.orgahb-report-count {
+	margin-left: 8px;
+	font-size: 13px;
+	color: #646970;
+}
+
+/* ── Reports: table ─────────────────────────────────────────────────────────── */
+
+.orgahb-report-table-wrap {
+	overflow-x: auto;
+	max-height: 600px;
+	overflow-y: auto;
+	border: 1px solid #c3c4c7;
+	border-radius: 3px;
+}
+
+.orgahb-report-table {
+	font-size: 12px;
+}
+
+.orgahb-report-table th,
+.orgahb-report-table td {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 200px;
+}
+
+.orgahb-report-empty,
+.orgahb-report-prompt {
+	padding: 20px 0;
+	color: #646970;
+}
+
+/* ── Admin-shell bundle manager mount ───────────────────────────────────────── */
+
+#orgahb-admin-shell {
+	margin-top: 16px;
+}
+
+/* ── Backup page ────────────────────────────────────────────────────────────── */
+
+.orgahb-backup-wrap hr {
+	margin: 24px 0;
+	border: none;
+	border-top: 1px solid #dcdcde;
+}
