@@ -280,7 +280,7 @@ final class ORGAHB_REST_API {
 
 	/** @return true|WP_Error */
 	public static function can_read_content(): true|WP_Error {
-		return current_user_can( 'read_orgahb_content' ) ? true : self::forbidden();
+		return current_user_can( 'read_orgahb_handbook' ) ? true : self::forbidden();
 	}
 
 	/** @return true|WP_Error */

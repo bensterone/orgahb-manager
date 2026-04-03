@@ -41,9 +41,9 @@ final class ORGAHB_Capabilities {
 		'orgahb_reader'   => array(
 			'display_name' => 'Handbook Reader',
 			'caps'         => array(
-				'read'                       => true,
-				'read_orgahb_content'        => true,
-				'acknowledge_orgahb_content' => true,
+				'read'                        => true,
+				'read_orgahb_handbook'        => true,  // primitive — safe for global checks
+				'acknowledge_orgahb_content'  => true,
 			),
 		),
 
@@ -52,11 +52,11 @@ final class ORGAHB_Capabilities {
 		'orgahb_operator' => array(
 			'display_name' => 'Field Operator',
 			'caps'         => array(
-				'read'                       => true,
-				'read_orgahb_content'        => true,
-				'acknowledge_orgahb_content' => true,
-				'log_orgahb_process_step'    => true,
-				'create_orgahb_observation'  => true,
+				'read'                        => true,
+				'read_orgahb_handbook'        => true,
+				'acknowledge_orgahb_content'  => true,
+				'log_orgahb_process_step'     => true,
+				'create_orgahb_observation'   => true,
 			),
 		),
 
@@ -66,16 +66,14 @@ final class ORGAHB_Capabilities {
 			'display_name' => 'Handbook Editor',
 			'caps'         => array(
 				'read'                               => true,
-				'read_orgahb_content'                => true,
+				'read_orgahb_handbook'               => true,
 				'acknowledge_orgahb_content'         => true,
 				'log_orgahb_process_step'            => true,
 				'create_orgahb_observation'          => true,
-				// Content authoring.
+				// Content authoring — plurals are primitive caps, safe for global checks.
 				'edit_orgahb_contents'               => true,
 				'create_orgahb_contents'             => true,
 				'submit_orgahb_content'              => true,
-				// WP meta-mapped caps required for the post editing UI.
-				'edit_orgahb_content'                => true,
 				'read_private_orgahb_contents'       => true,
 				'edit_published_orgahb_contents'     => true,
 				'edit_private_orgahb_contents'       => true,
@@ -83,7 +81,6 @@ final class ORGAHB_Capabilities {
 				// Building management (editors can manage bundles and draft buildings).
 				'manage_orgahb_buildings'            => true,
 				'edit_orgahb_buildings'              => true,
-				'edit_orgahb_building'               => true,
 				'create_orgahb_buildings'            => true,
 				'edit_published_orgahb_buildings'    => true,
 				'edit_private_orgahb_buildings'      => true,
@@ -96,7 +93,7 @@ final class ORGAHB_Capabilities {
 			'display_name' => 'Handbook Reviewer',
 			'caps'         => array(
 				'read'                                 => true,
-				'read_orgahb_content'                  => true,
+				'read_orgahb_handbook'                 => true,
 				'acknowledge_orgahb_content'           => true,
 				'log_orgahb_process_step'              => true,
 				'create_orgahb_observation'            => true,
@@ -109,7 +106,6 @@ final class ORGAHB_Capabilities {
 				// Taxonomy management.
 				'manage_orgahb_sections'               => true,
 				// WP meta-mapped caps for content CPTs.
-				'edit_orgahb_content'                  => true,
 				'read_private_orgahb_contents'         => true,
 				'edit_others_orgahb_contents'          => true,
 				'edit_published_orgahb_contents'       => true,
@@ -120,7 +116,6 @@ final class ORGAHB_Capabilities {
 				'upload_files'                         => true,
 				// Building management — full CRUD for reviewers.
 				'manage_orgahb_buildings'              => true,
-				'edit_orgahb_building'                 => true,
 				'edit_orgahb_buildings'                => true,
 				'create_orgahb_buildings'              => true,
 				'edit_others_orgahb_buildings'         => true,
@@ -161,6 +156,9 @@ final class ORGAHB_Capabilities {
 		$caps['delete_private_orgahb_buildings'] = true;
 		$caps['delete_published_orgahb_buildings'] = true;
 		$caps['delete_others_orgahb_buildings']  = true;
+
+		// Primitive handbook-read cap — safe for global current_user_can() calls.
+		$caps['read_orgahb_handbook'] = true;
 
 		// Administrator-only destructive caps.
 		$caps['delete_orgahb_contents']  = true;

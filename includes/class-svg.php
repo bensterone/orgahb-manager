@@ -48,7 +48,7 @@ final class ORGAHB_SVG {
 	 * @return array<string, string>
 	 */
 	public static function allow_svg_mime( array $mimes ): array {
-		if ( current_user_can( 'edit_orgahb_content' ) || current_user_can( 'manage_options' ) ) {
+		if ( current_user_can( 'edit_orgahb_contents' ) || current_user_can( 'manage_options' ) ) {
 			$mimes['svg']  = 'image/svg+xml';
 			$mimes['svgz'] = 'image/svg+xml';
 		}

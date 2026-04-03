@@ -77,13 +77,13 @@ final class ORGAHB_Plugin {
 		$needs_sync = false;
 
 		$administrator = get_role( 'administrator' );
-		if ( ! $administrator || ! $administrator->has_cap( 'edit_orgahb_contents' ) ) {
+		if ( ! $administrator || ! $administrator->has_cap( 'read_orgahb_handbook' ) ) {
 			$needs_sync = true;
 		}
 
 		if ( ! $needs_sync ) {
 			$editor = get_role( 'orgahb_editor' );
-			if ( ! $editor || ! $editor->has_cap( 'edit_published_orgahb_contents' ) ) {
+			if ( ! $editor || ! $editor->has_cap( 'read_orgahb_handbook' ) ) {
 				$needs_sync = true;
 			}
 		}

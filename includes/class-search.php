@@ -85,7 +85,7 @@ final class ORGAHB_Search {
 	 * @return bool
 	 */
 	public static function can_read(): bool {
-		return current_user_can( 'read_orgahb_content' );
+		return current_user_can( 'read_orgahb_handbook' );
 	}
 
 	/**

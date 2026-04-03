@@ -40,7 +40,7 @@ final class ORGAHB_Handbook_Tree {
 	 */
 	public static function render_shortcode( array|string $atts ): string {
 		// Only render for authenticated users who can read content.
-		if ( ! current_user_can( 'read_orgahb_content' ) ) {
+		if ( ! current_user_can( 'read_orgahb_handbook' ) ) {
 			return '<p>' . esc_html__( 'You do not have permission to view the handbook.', 'orgahb-manager' ) . '</p>';
 		}
 
@@ -90,7 +90,7 @@ final class ORGAHB_Handbook_Tree {
 					'canAck'     => current_user_can( 'acknowledge_orgahb_content' ),
 					'canLog'     => false, // execution requires building context; disabled in tree view
 					'canObserve' => current_user_can( 'create_orgahb_observation' ),
-					'canEdit'    => current_user_can( 'edit_orgahb_content' ),
+					'canEdit'    => current_user_can( 'edit_orgahb_contents' ),
 				),
 			)
 		);

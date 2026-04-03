@@ -47,7 +47,7 @@ final class ORGAHB_Admin {
 		add_menu_page(
 			__( 'Handbook', 'orgahb-manager' ),
 			__( 'Handbook', 'orgahb-manager' ),
-			'read_orgahb_content',
+			'read_orgahb_handbook',
 			'orgahb-handbook',
 			array( self::class, 'render_dashboard' ),
 			'dashicons-book-alt',
@@ -151,7 +151,7 @@ final class ORGAHB_Admin {
 	 * @return void
 	 */
 	public static function render_dashboard(): void {
-		if ( ! current_user_can( 'read_orgahb_content' ) ) {
+		if ( ! current_user_can( 'read_orgahb_handbook' ) ) {
 			wp_die( esc_html__( 'You do not have permission to access this page.', 'orgahb-manager' ) );
 		}
 

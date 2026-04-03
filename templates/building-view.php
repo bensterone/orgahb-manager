@@ -48,7 +48,7 @@ if ( ! is_user_logged_in() ) {
 	exit;
 }
 
-if ( ! current_user_can( 'read_orgahb_content' ) ) {
+if ( ! current_user_can( 'read_orgahb_handbook' ) ) {
 	wp_die(
 		esc_html__( 'You do not have permission to view this building handbook.', 'orgahb-manager' ),
 		esc_html__( 'Access Denied', 'orgahb-manager' ),
