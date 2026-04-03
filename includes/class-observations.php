@@ -6,7 +6,7 @@
  * They are NOT a ticket/complaint system — they are contextual notes that
  * live inside the handbook view (spec §7.5, §2.3, §4.5).
  *
- * Status flow: open → in_progress → resolved / closed
+ * Status flow: open → resolved (spec §25.6)
  *
  * @package OrgaHB_Manager
  */
@@ -20,11 +20,11 @@ defined( 'ABSPATH' ) || exit;
  */
 final class ORGAHB_Observations {
 
-	/** Valid status values. */
-	const STATUSES = array( 'open', 'in_progress', 'resolved', 'closed' );
+	/** Valid status values (spec §25.6 — intentionally small). */
+	const STATUSES = array( 'open', 'resolved' );
 
 	/** Statuses that mark the observation as "done" for query filtering. */
-	const RESOLVED_STATUSES = array( 'resolved', 'closed' );
+	const RESOLVED_STATUSES = array( 'resolved' );
 
 	// ── Write ─────────────────────────────────────────────────────────────────
 

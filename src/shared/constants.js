@@ -18,12 +18,10 @@ export const CONTENT_TYPES = {
 	DOCUMENT: 'document',
 };
 
-/** Observation status values (spec §25.6). */
+/** Observation status values (spec §25.6 — intentionally only open/resolved). */
 export const OBSERVATION_STATUSES = [
-	{ value: 'open',        label: 'Open' },
-	{ value: 'in_progress', label: 'In Progress' },
-	{ value: 'resolved',    label: 'Resolved' },
-	{ value: 'closed',      label: 'Closed' },
+	{ value: 'open',     label: 'Open' },
+	{ value: 'resolved', label: 'Resolved' },
 ];
 
 /** Document display modes (spec §27.3). */
