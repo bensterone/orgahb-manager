@@ -1245,15 +1245,19 @@ final class ORGAHB_REST_API {
 	 * @return array<string, mixed>
 	 */
 	private static function format_tree_item( WP_Post $post, string $content_type ): array {
-		$id   = $post->ID;
+		$id        = $post->ID;
+		$revisions = wp_get_post_revisions( $id, array( 'posts_per_page' => 1, 'fields' => 'ids' ) );
+		$rev_id    = ! empty( $revisions ) ? (int) reset( $revisions ) : $id;
+
 		$meta = array(
-			'version_label' => (string) get_post_meta( $id, ORGAHB_Metaboxes::META_VERSION_LABEL, true ),
-			'change_log'    => (string) get_post_meta( $id, ORGAHB_Metaboxes::META_CHANGE_LOG, true ),
-			'valid_from'    => (string) get_post_meta( $id, ORGAHB_Metaboxes::META_VALID_FROM, true ),
-			'valid_until'   => (string) get_post_meta( $id, ORGAHB_Metaboxes::META_VALID_UNTIL, true ),
-			'next_review'   => (string) get_post_meta( $id, ORGAHB_Buildings::META_NEXT_REVIEW, true ),
-			'owner_name'    => (string) get_the_author_meta( 'display_name', $post->post_author ),
-			'requires_ack'  => (bool) get_post_meta( $id, ORGAHB_Metaboxes::META_REQUIRES_ACK, true ),
+			'version_label'       => (string) get_post_meta( $id, ORGAHB_Metaboxes::META_VERSION_LABEL, true ),
+			'change_log'          => (string) get_post_meta( $id, ORGAHB_Metaboxes::META_CHANGE_LOG, true ),
+			'valid_from'          => (string) get_post_meta( $id, ORGAHB_Metaboxes::META_VALID_FROM, true ),
+			'valid_until'         => (string) get_post_meta( $id, ORGAHB_Metaboxes::META_VALID_UNTIL, true ),
+			'next_review'         => (string) get_post_meta( $id, ORGAHB_Buildings::META_NEXT_REVIEW, true ),
+			'owner_name'          => (string) get_the_author_meta( 'display_name', $post->post_author ),
+			'requires_ack'        => (bool) get_post_meta( $id, ORGAHB_Metaboxes::META_REQUIRES_ACK, true ),
+			'current_revision_id' => $rev_id,
 		);
 
 		if ( 'process' === $content_type ) {
